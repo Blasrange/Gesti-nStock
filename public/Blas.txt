@@ -1,0 +1,120 @@
+<?php
+// app/Replenishment.php
+
+namespace App;
+
+class Replenishment {
+    private $db;
+
+    public function __construct(Database $db) {
+        $this->db = $db;
+    }
+
+    public function generateReplenishments() {
+        // Obtener la lista de materiales de la maestra
+        $materials = $this->db->fetchAll("SELECT * FROM maestra_materiales");
+        
+        if ($materials === false) {
+            error_log("Error al obtener la maestra de materiales.", 3, __DIR__ . '/../logs/replenishment.log');
+            return [];
+        }
+
+        $replenishments = []; // Inicializar el arreglo para almacenar reabastecimientos
+
+        foreach ($materials as $material) {
+            $sku = $material['sku'];
+            $lpnMaestra = $material['lpn'];
+            $localizacionMaestra = $material['localizacion'];
+            $stockMin = $material['stock_minimo'];
+            $stockMax = $material['stock_maximo'];
+            $descripcion = $material['descripcion'];
+
+            // Verificar el stock actual del inventario para este SKU y localización específica
+            $inventory = $this->db->fetchAll("SELECT * FROM inventarios WHERE sku = ? AND localizacion = ?", [$sku, $localizacionMaestra]);
+
+            if ($inventory === false || count($inventory) === 0) {
+                error_log("No se encontraron datos para el SKU: $sku en la localización: $localizacionMaestra", 3, __DIR__ . '/../logs/replenishment.log');
+                continue; // Saltar al siguiente SKU si no hay coincidencias
+            }
+
+            // Calcular el total disponible en la ubicación de la maestra de materiales
+            $totalAvailableMaestra = 0;
+            $loteMaestra = null;
+            $fechaVencimientoMaestra = null;
+
+            foreach ($inventory as $item) {
+                $totalAvailableMaestra += $item['disponible'];
+
+                // Obtener lote y fecha de vencimiento del inventario
+                if ($loteMaestra === null && $item['disponible'] > 0) {
+                    $loteMaestra = $item['lote'];
+                    $fechaVencimientoMaestra = $item['fecha_vencimiento'];
+                }
+            }
+
+            // Si el stock disponible en la localización de la maestra está por debajo del mínimo
+            if ($totalAvailableMaestra < $stockMin) {
+                $unitsToReplenish = $stockMax - $totalAvailableMaestra;
+
+                // Buscar en otras localizaciones del mismo SKU para tomar unidades
+                $inventoryOtherLocations = $this->db->fetchAll("SELECT * FROM inventarios WHERE sku = ? AND localizacion != ?", [$sku, $localizacionMaestra]);
+
+                if ($inventoryOtherLocations === false || count($inventoryOtherLocations) === 0) {
+                    error_log("No se encontraron otras ubicaciones para el SKU: $sku", 3, __DIR__ . '/../logs/replenishment.log');
+                    continue; // Saltar si no hay ubicaciones adicionales
+                }
+
+                $totalTaken = 0;
+
+                foreach ($inventoryOtherLocations as $otherLocationItem) {
+                    $availableInOtherLocation = $otherLocationItem['disponible'];
+                    $lpnInventario = $otherLocationItem['lpn'];
+                    $localizacionOrigen = $otherLocationItem['localizacion'];
+                    $lote = $otherLocationItem['lote'];
+                    $fechaVencimiento = $otherLocationItem['fecha_vencimiento'];
+
+                    // Si hay unidades disponibles en esta localización
+                    if ($availableInOtherLocation > 0) {
+                        $unitsToTake = min($availableInOtherLocation, $unitsToReplenish - $totalTaken);
+
+                        // Intentar insertar en la tabla de reabastecimientos
+                        $result = $this->db->execute(
+                            "INSERT INTO reabastecimientos (sku, descripcion, lpn_inventario, localizacion_origen, unidades_reabastecer, lote, fecha_vencimiento, lpn_max_min, localizacion_destino, estado) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            [$sku, $descripcion, $lpnInventario, $localizacionOrigen, $unitsToTake, $lote, $fechaVencimiento, $lpnMaestra, $localizacionMaestra, 'Pendiente']
+                        );
+
+                        if (!$result) {
+                            error_log("Error al insertar reabastecimiento para SKU: $sku, Unidades: $unitsToTake", 3, __DIR__ . '/../logs/replenishment.log');
+                        } else {
+                            error_log("Reabastecimiento generado para SKU: $sku con unidades: $unitsToTake", 3, __DIR__ . '/../logs/replenishment.log');
+
+                            // Agregar a la lista de reabastecimientos generados
+                            $replenishments[] = [
+                                'sku' => $sku,
+                                'descripcion' => $descripcion,
+                                'lpn_inventario' => $lpnInventario,
+                                'localizacion_origen' => $localizacionOrigen,
+                                'unidades_reabastecer' => $unitsToTake,
+                                'lote' => $lote,
+                                'fecha_vencimiento' => $fechaVencimiento,
+                                'lpn_max_min' => $lpnMaestra,
+                                'localizacion_destino' => $localizacionMaestra,
+                                'estado' => 'Pendiente'
+                            ];
+
+                            $totalTaken += $unitsToTake;
+                        }
+
+                        // Si ya hemos tomado suficientes unidades, salir del loop
+                        if ($totalTaken >= $unitsToReplenish) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $replenishments; // Retornar la lista de reabastecimientos generados
+    }
+}

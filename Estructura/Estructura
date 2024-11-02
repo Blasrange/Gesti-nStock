@@ -1,0 +1,38 @@
+reabastecimiento/
+│
+├── app/
+│   ├── Auth.php               # Lógica de autenticación
+│   ├── Database.php           # Conexión a la base de datos
+│   ├── Config.php             # Configuraciones del sistema
+│   ├── Inventory.php          # Lógica de gestión de inventarios
+│   ├── Materials.php          # Lógica de gestión de materiales
+│   ├── Replenishment.php      # Lógica de reabastecimientos
+│   ├── Reports.php            # Generación de reportes
+│   ├── History.php            # Manejo del historial de operaciones
+│   └── Import.php             # Lógica de importación de Excel
+│
+├── public/
+│   ├── assets/                # Recursos públicos como CSS, JS, imágenes
+│   │   ├── css/
+│   │   │   └── estilos.css     # Estilos de la aplicación
+│   │   └── js/
+│   │       └── script.js       # Scripts JavaScript
+│   │
+│   ├── login.php              # Página de inicio de sesión
+│   ├── authenticate.php       # Procesamiento de inicio de sesión
+│   ├── dashboard.php          # Página principal del usuario
+│   ├── select_client_city.php # Selección de cliente y ciudad
+│   ├── select_city.php        # Selección de ciudad
+│   ├── process_client_city.php # Procesar selección de cliente y ciudad
+│   ├── get_cities.php         # Obtener ciudades por cliente (AJAX)
+│   └── test_login.php         # Pruebas de inicio de sesión (opcional)
+│
+├── migrations/                # Scripts para crear/actualizar bases de datos
+│   ├── create_users_table.sql   # Creación de la tabla de usuarios
+│   ├── create_client_table.sql   # Creación de la tabla de clientes
+│   └── create_user_client_table.sql # Creación de la tabla de relaciones
+│
+├── vendor/                    # Dependencias de Composer
+│   └── ...                    # Carpeta autogenerada por Composer
+│
+└── .gitignore                 # Ignorar archivos no necesarios en git

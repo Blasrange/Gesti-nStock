@@ -1,0 +1,403 @@
+/* Estilos globales */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fa;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Encabezado */
+.header {
+    background-color: #81c781;
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.nav {
+    margin-left: 20px;
+}
+
+.nav a {
+    color: #fff;
+    margin-left: 10px;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.nav a:hover {
+    text-decoration: underline;
+}
+
+/* Contenido */
+.content {
+    padding: 40px;
+    max-width: 1200px;
+    margin: auto;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.content h2 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Footer */
+.footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 15px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    font-size: 14px;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center; /* Centrar tanto encabezados como celdas */
+    vertical-align: middle; /* Centrar el contenido verticalmente */
+}
+
+th {
+    background-color: #81c781;
+    color: #fff;
+    font-weight: bold;
+}
+
+td {
+    color: #555;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Ajustes específicos para algunas columnas */
+td:nth-child(8){
+    text-align: right; /* Alinea estas columnas a la derecha */
+}
+
+/* Botones */
+button {
+    background-color: #81c781;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #81c781;
+}
+
+button.danger {
+    background-color: #d9534f;
+}
+
+button.danger:hover {
+    background-color: #c9302c;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .nav a {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    .footer {
+        font-size: 12px;
+    }
+}
+
+/* Estilo para las acciones */
+.acciones {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-edit {
+    background-color: #007bff;
+    width: 30px;
+    height: 10px;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    width: 60px;
+    height: 30px;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Estilo de grid */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.grid-header {
+    background-color: #999595;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+}
+
+.grid-item {
+    background-color: #a19e9e;
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* Encabezados siempre centrados */
+thead th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/*-Blas_*/
+th, td {
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+}
+
+/***Blas Rangel***/
+
+.form-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+label.custom-file-upload {
+    background-color: #71b871;
+    border: 0px solid #b43838;
+    padding: 7px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 0px;
+}
+
+#file-upload {
+    display: none;
+}
+
+.file-box {
+    font-size: 16px;
+    color: #3d3d3d;
+    border: 1px solid #eeecec;
+    padding: 6px 10px;
+    border-radius: 5px;
+    min-width: 200px;
+    display: inline-block;
+    background-color: #f0ecec;
+}
+
+button {
+    background-color: #6db16d;
+    color: rgb(247, 246, 246);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #3e8f3e; /**cargar**/
+}
+
+/*******/
+.custom-file-upload {
+    display: inline-block;
+    background-color: #d0d0d3; 
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.custom-file-upload:hover {
+    background-color: #81c781; 
+}
+
+/*__________*/
+.form-upload {
+    position: relative;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50; /* Color de fondo del botón */
+    color: white; /* Color del texto */
+    padding: 10px 16px; /* Espaciado del botón */
+    font-size: 16px; /* Tamaño de la fuente */
+    border: none; /* Sin borde */
+    cursor: pointer; /* Cursor de puntero */
+    border-radius: 4px; /* Bordes redondeados */
+}
+
+.dropdown-content {
+    display: none; /* Ocultar el contenido por defecto */
+    position: absolute; /* Posicionarlo por encima */
+    background-color: white; /* Color de fondo del menú */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+    z-index: 1; /* Para asegurarse de que esté por encima */
+    min-width: 160px; /* Ancho mínimo */
+    border-radius: 4px; /* Bordes redondeados */
+}
+
+.dropdown:hover .dropdown-content {
+    display: block; /* Mostrar el contenido al pasar el mouse */
+}
+
+.dropdown-content form {
+    margin: 0; 
+}
+
+.dropdown-content button {
+    background-color: transparent; /* Fondo transparente para botones */
+    color: #333; /* Color del texto */
+    padding: 10px; /* Espaciado del botón */
+    text-align: left; /* Alinear texto a la izquierda */
+    border: none; /* Sin borde */
+    width: 100%; /* Botones ocupan todo el ancho */
+    cursor: pointer; /* Cursor de puntero */
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+.dropdown-content button:hover {
+    background-color: #f1f1f1; /* Color de fondo al pasar el mouse */
+}
+
+.btn-eliminar {
+    width: 60px;              /* Ancho del botón */
+    height: 30px;             /* Alto del botón */
+    padding: 5px 10px;        /* Espaciado interno */
+    margin: 5px 5px;          /* Margen */
+    font-size: 12px;          /* Tamaño de texto */
+    border-radius: 5px;       /* Bordes redondeados */
+    color: white;             /* Color de texto */
+    border: none;             /* Sin borde */
+    text-align: center;       /* Centrar texto */
+    text-decoration: none;    /* Sin subrayado */
+    display: inline-block;    /* Mostrar como bloque en línea */
+    cursor: pointer;          /* Cambiar cursor al pasar el mouse */
+    background-color: #f44336; /* Color de fondo rojo */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.btn-eliminar:hover {
+    background-color: #4CAF50; /* Color de fondo más oscuro al pasar el mouse */
+}
+
+.btn-editar {
+    width: 40px;              /* Ancho del botón */
+    height: 19px;             /* Alto del botón */
+    padding: 5px 10px;        /* Espaciado interno */
+    margin: 5px 5px;          /* Margen */
+    font-size: 12px;          /* Tamaño de texto */
+    border-radius: 5px;       /* Bordes redondeados */
+    color: white;             /* Color de texto */
+    border: none;             /* Sin borde */
+    text-align: center;       /* Centrar texto */
+    text-decoration: none;    /* Sin subrayado */
+    display: inline-block;    /* Mostrar como bloque en línea */
+    cursor: pointer;          /* Cambiar cursor al pasar el mouse */
+    background-color: #4CAF50; /* Color de fondo verde */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.btn-editar:hover {
+    background-color: #f44336; /* Color de fondo más oscuro al pasar el mouse */
+}
+
+.btn-eliminar:focus,
+.btn-editar:focus {
+    outline: none; /* Eliminar el contorno predeterminado */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5); /* Añadir sombra para el foco */
+}
+.search-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-input {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 300px; /* Puedes ajustar este valor según el ancho deseado */
+}

@@ -1,0 +1,9 @@
+# public/.htaccess
+
+DirectoryIndex index.php
+
+# Reglas para redirigir todas las solicitudes a index.php (opcional)
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]

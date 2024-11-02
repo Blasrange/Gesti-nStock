@@ -1,0 +1,89 @@
+https://bluuweb.dev/03-git/02-git.html
+
+# Versión de git
+git version
+
+# Para cambiar o agregar el nombre de usuario 👇🏽
+git config --global user.name "mi nombre"
+
+# Es recomendable utilizar el correo asociado a Github
+git config --global user.email "myemail@example.com"
+
+# Para dejar la rama main como rama principal en lugar de master 👇🏽
+git config --global init.defaultBranch main
+
+# Para activar los colores en la consola 👇🏽
+git config --global color.ui true
+
+# Para verificar que se haya registrado correctamente:
+git config user.name
+git config user.email
+
+# Ayuda
+// Ayuda sobre los comandos
+git help
+
+# Mi primer repositorio
+// Iniciar un nuevo repositorio
+// Crear la carpeta oculta .git
+// Solo se ejecuta una vez por proyecto
+git init
+
+// Ver que archivos no han sido registrados
+git status -s
+
+// Agregar todos los archivos para que esté pendiente de los cambios
+git add .
+
+// Crear commit (fotografía del proyecto en ese momento)
+git commit -m "primer commit"
+
+// Muestra la lista de commit del mas reciente al más antigüo
+git log --oneline
+
+En resumidas cuentas nosotros realizamos cambios en nuestros archivos, el comando status verificará que archivos han sidos modificados. Cuando deseemos registrar esos cambios tendremos que agregarlos con add . así ya estará listo para poder hacer un commit. El commit realiza la copia de ese instante para poder volver en el tiempo si es que es necesario.
+
+// Vemos información de la rama maestra
+git status -s -b
+git status -sb //Hace lo mismo que el comando anterior
+
+# Crear repositorio (HTTPS)
+git remote add origin https://github.com/Blasrange/reabastecimiento.git
+git push -u origin main
+
+# Remover el repositorio remoto
+git remote remove origin
+
+Al ejecutar estas líneas de comando te pedirá el usuario y contraseña de tu cuenta de github.
+// Nos muestra en que repositorio estamos enlazados remotamente.
+git remote -v
+
+# Generar Clave SSH (dale enter a todo)
+ssh-keygen -t rsa -b 4096 -C "llave-ssh"
+
+Para que nos muestre la llave generada
+cat ~/.ssh/id_rsa.pub
+
+Para verificar que la llave esté funcionando
+ssh -T git@github.com
+
+# Push
+Para futuros cambios y subir los registros a github ejecutar:
+
+git add .
+git commit -m "nuevo commit"
+git push
+git push principal
+git push --set-upstream origin master
+
+
+# Clonar repositorio
+Para descargar un repositorio completo basta con tomar la url ej: https://github.com/Blasrange/reabastecimiento.git y ejecutar el siguiente comando en alguna carpeta de su computadora.
+git clone https://github.com/Blasrange/reabastecimiento.git nombreCarpeta
+
+# borrar "cls"
+
+git checkout principal
+git fetch origin
+git merge master
+git push
