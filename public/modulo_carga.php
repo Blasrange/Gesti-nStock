@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verificar si el usuario tiene sesión activa y permisos
 require_once '../app/db.php';
 require_once '../vendor/autoload.php';
 
@@ -16,7 +15,7 @@ $database = new Database();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo de Carga</title>
-    <link rel="stylesheet" href="../css/styles.css"> <!-- Asegúrate de incluir tu archivo CSS -->
+    <link rel="stylesheet" href="../css/styles.css"> 
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,11 +51,9 @@ $database = new Database();
             text-align: center;
             font-weight: bold;
             transition: background-color 0.3s;
-        }
-
-        /* Efecto hover para cambiar el color al pasar el mouse */
+        }        
         .custom-file-upload:hover {
-            background-color: #218838; /* Cambia a un tono más oscuro de azul */
+            background-color: #218838; 
         }
 
         .file-box {
@@ -104,7 +101,7 @@ $database = new Database();
     
 <div class="header">
     <a href="dashboard.php" style="text-decoration: none; color: black;">
-        <h1>Módulo de Carga de Archivos</h1>
+        <h1>Carga de Archivos</h1>
     </a>
 
     <!-- Formulario para cargar inventario -->

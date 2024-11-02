@@ -7,7 +7,7 @@ use PDO;
 use PDOException;
 
 class Database {
-    private $host = '127.0.0.1'; // Cambiado a 127.0.0.1
+    private $host = '127.0.0.1';
     private $db = 'reabastecimiento';
     private $user = 'root'; 
     private $pass = ''; 
@@ -39,7 +39,7 @@ class Database {
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log("Error en fetchAll: " . $e->getMessage(), 3, __DIR__ . '/../logs/error.log');
-            return false; // Retorna false en caso de error
+            return false;
         }
     }
         public function fetch($query, $params = []) {
@@ -55,7 +55,7 @@ class Database {
             return $stmt->execute($params);
         } catch (PDOException $e) {
             error_log("Error en execute: " . $e->getMessage(), 3, __DIR__ . '/../logs/error.log');
-            return false; // Retorna false en caso de error
+            return false;
         }
     }
 
@@ -66,7 +66,7 @@ class Database {
             return $stmt->fetchColumn();
         } catch (PDOException $e) {
             error_log("Error en fetchOne: " . $e->getMessage(), 3, __DIR__ . '/../logs/error.log');
-            return false; // Retorna false en caso de error
+            return false;
         }
     }
 }
