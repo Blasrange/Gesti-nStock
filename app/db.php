@@ -9,6 +9,7 @@ use PDOException;
 class Database {
     private $host = '127.0.0.1';
     private $db = 'reabastecimiento';
+    //private $db = 'reabastecimiento_QA';
     private $user = 'root'; 
     private $pass = ''; 
     private $charset = 'utf8mb4';

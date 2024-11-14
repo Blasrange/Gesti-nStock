@@ -224,7 +224,7 @@ VALUES
 ------------------------------------------------------------------------------------
 -- Insertar Usuario
 INSERT INTO users (
-    username, password, cliente_id
+    username, password, cliente_id, created_at
 ) VALUES 
 ('Blas Rangel', '$2y$10$iu9ejnvSH9PNtgoAKlkmqOF0/BkSvbgz8lfMi.7Ove5Luu0PB4Pum', 13);
 ------------------------------------------------------------------------------------
@@ -237,7 +237,7 @@ VALUES
     (26, 16, NOW());
 ------------------------------------------------------------------------------------
 -- Insertar estados cliente con ID 1
-INSERT INTO estado_cliente (cliente_id, estado, descripcion) VALUES
+INSERT INTO estado_cliente (cliente_id, estado, descripcion, created_at) VALUES
 (15, 'DSP (Disponible)', 'Disponible para reabastecimiento'),
 (16, 'DISPONIBLE', 'Disponible para reabastecimiento')
 (13, '13 - CCL  DISPONIBLE', 'Disponible para reabastecimiento'),

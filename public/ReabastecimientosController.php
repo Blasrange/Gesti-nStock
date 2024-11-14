@@ -143,11 +143,10 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
             width: 100%;
             background-color: #f8f9fa;
             text-align: center;
-            padding: 1px;
+            padding: 3px;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
             z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
         }
-
         .search-container {
             display: flex;
             gap: 8px; /* Ajusta el espacio entre el campo de búsqueda y el botón */
@@ -207,7 +206,7 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
                         <td><?php echo htmlspecialchars($reabastecimiento['localizacion_origen'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['unidades_reabastecer']); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['lote']); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['fecha_vencimiento']); ?></td>
+                        <td><?php echo htmlspecialchars($reabastecimiento['fecha_vencimiento'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['lpn_max_min'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['localizacion_destino'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['estado']); ?></td>                     

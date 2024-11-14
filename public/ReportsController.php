@@ -67,45 +67,65 @@ if (isset($_POST['actualizar'])) {
 
 if (isset($_POST['descargar_excel'])) {
     $reportes = $_SESSION['reportes'] ?? [];
-    
+
     if (!empty($reportes)) {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        
-        // Establecer encabezados
-        $sheet->setCellValue('A1', 'SKU');
-        $sheet->setCellValue('B1', 'Descripción');
-        $sheet->setCellValue('C1', 'LPN Inventario');
-        $sheet->setCellValue('D1', 'Localización Origen');
-        $sheet->setCellValue('E1', 'LPN Max Min');
-        $sheet->setCellValue('F1', 'Localización Destino');
-        $sheet->setCellValue('G1', 'Estado');
-        $sheet->setCellValue('H1', 'Unidades a Reabastecer');
-        $sheet->setCellValue('I1', 'Cajas a Reabastecer');
-        
-        // Llenar datos
-        $row = 2; // Comenzar desde la segunda fila
-        foreach ($reportes as $reporte) {
-            $sheet->setCellValue('A' . $row, $reporte['sku']);
-            $sheet->setCellValue('B' . $row, $reporte['descripcion'] ?? '');
-            $sheet->setCellValue('C' . $row, $reporte['lpn_inventario'] ?? '');
-            $sheet->setCellValue('D' . $row, $reporte['localizacion_origen'] ?? '');
-            $sheet->setCellValue('E' . $row, $reporte['lpn_max_min'] ?? '');
-            $sheet->setCellValue('F' . $row, $reporte['localizacion_destino'] ?? '');
-            $sheet->setCellValue('G' . $row, $reporte['estado'] ?? '');
-            $sheet->setCellValue('H' . $row, $reporte['unidades_reabastecer'] ?? 0);
-            $sheet->setCellValue('I' . $row, $reporte['cajas_reabastecer'] ?? 0);
-            $row++;
+
+        // Comprobamos si el cliente_id es 1 para elegir qué columnas mostrar
+        if ($cliente_id == 1) {
+            // Encabezados específicos para cliente_id 1
+            $sheet->setCellValue('A1', 'LTLD_LPN_SRC');
+            $sheet->setCellValue('B1', 'LTLD_SKU');
+            $sheet->setCellValue('C1', 'LTLD_LOT');
+            $sheet->setCellValue('D1', 'LTLD_QTY');
+            $sheet->setCellValue('E1', 'LTLD_LPN_DST');
+            $sheet->setCellValue('F1', 'LTLD_LOCATION_DST');
+
+            // Llenar datos específicos para cliente_id 1
+            $row = 2;
+            foreach ($reportes as $reporte) {
+                $sheet->setCellValue('A' . $row, $reporte['lpn_inventario'] ?? '');
+                $sheet->setCellValue('B' . $row, $reporte['sku']);
+                $sheet->setCellValue('C' . $row, $reporte['lote'] ?? '');
+                $sheet->setCellValue('D' . $row, $reporte['unidades_reabastecer'] ?? 0);
+                $sheet->setCellValue('E' . $row, $reporte['lpn_max_min'] ?? '');
+                $sheet->setCellValue('F' . $row, $reporte['localizacion_destino'] ?? '');
+                $row++;
+            }
+        } else {
+            // Plantilla general
+            $sheet->setCellValue('A1', 'SKU');
+            $sheet->setCellValue('B1', 'Descripción');
+            $sheet->setCellValue('C1', 'LPN Inventario');
+            $sheet->setCellValue('D1', 'Localización Origen');
+            $sheet->setCellValue('E1', 'LPN Max Min');
+            $sheet->setCellValue('F1', 'Localización Destino');
+            $sheet->setCellValue('G1', 'Estado');
+            $sheet->setCellValue('H1', 'Unidades a Reabastecer');
+            $sheet->setCellValue('I1', 'Cajas a Reabastecer');
+
+            $row = 2;
+            foreach ($reportes as $reporte) {
+                $sheet->setCellValue('A' . $row, $reporte['sku']);
+                $sheet->setCellValue('B' . $row, $reporte['descripcion'] ?? '');
+                $sheet->setCellValue('C' . $row, $reporte['lpn_inventario'] ?? '');
+                $sheet->setCellValue('D' . $row, $reporte['localizacion_origen'] ?? '');
+                $sheet->setCellValue('E' . $row, $reporte['lpn_max_min'] ?? '');
+                $sheet->setCellValue('F' . $row, $reporte['localizacion_destino'] ?? '');
+                $sheet->setCellValue('G' . $row, $reporte['estado'] ?? '');
+                $sheet->setCellValue('H' . $row, $reporte['unidades_reabastecer'] ?? 0);
+                $sheet->setCellValue('I' . $row, $reporte['cajas_reabastecer'] ?? 0);
+                $row++;
+            }
         }
-        
-        // Generar archivo Excel
-        $writer = new Xlsx($spreadsheet);
+
         $fileName = 'reportes_cliente_' . $cliente_id . '.xlsx';
-        
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         header('Cache-Control: max-age=0');
         
+        $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
         exit;
     }
