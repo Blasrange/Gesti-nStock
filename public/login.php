@@ -2,19 +2,27 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Reabastecimiento</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            height: 100vh;
-            justify-content: center;
-            align-items: center;
+        * {
             margin: 0;
-            position: relative; /* Para que el pseudo-elemento ::before se posicione relativo al body */
+            padding: 0;
+            box-sizing: border-box;
         }
 
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            background: url('assets/images/Logistica.jpg') no-repeat center center/cover;
+            position: relative;
+        }
+
+        /* Capa de oscurecimiento sobre la imagen de fondo */
         body::before {
             content: '';
             position: absolute;
@@ -22,66 +30,76 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('assets/images/Logistica.jpg');
-            background-size: cover;
-            background-position: center;
-            /*background-color: rgba(0, 0, 0, 0.5); /* Capa negra con opacidad */
-            /*opacity: 0.7; /* Controla la opacidad de la imagen */
-            z-index: -1; /* Coloca el pseudo-elemento detrás del contenido del body */
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
         }
 
         .login-container {
             position: relative;
-            z-index: 1; /* Asegura que el contenido esté por encima de la capa */
-            background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semitransparente */
-            padding: 20px 30px;  
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 2;
             width: 350px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            margin-right: 10%;
         }
 
         .login-container h2 {
-            margin-bottom: 20px;
             text-align: center;
             color: #333;
+            margin-bottom: 20px;
         }
 
         .login-container label {
             display: block;
-            margin-top: 10px;
+            margin: 10px 0 5px;
             color: #555;
         }
 
-        .login-container input[type="text"],
-        .login-container input[type="password"] {
-            width: 93%;
-            padding: 8px 10px;
-            margin-top: 5px;
+        .login-container input {
+            width: 100%;
+            padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 14px;
         }
 
         .login-container button {
-            margin-top: 15px;
             width: 100%;
             padding: 10px;
-            background-color: #5cb85c;
+            background-color: #007bff;
             border: none;
-            color: #fff;
-            border-radius: 4px;
-            cursor: pointer;
+            color: white;
             font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
         }
 
         .login-container button:hover {
-            background-color: #4cae4c;
+            background-color: #0056b3;
+        }
+
+        .forgot-password {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
         }
 
         .error {
             color: red;
-            margin-top: 10px;
             text-align: center;
+            margin-top: 10px;
         }
+
     </style>
 </head>
 <body>
@@ -101,6 +119,7 @@
 
             <button type="submit">Ingresar</button>
         </form>
+        <a href="#" class="forgot-password">¿Has olvidado tu contraseña?</a>
     </div>
 </body>
 </html>

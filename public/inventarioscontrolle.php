@@ -10,6 +10,7 @@ error_reporting(E_ALL);
 
 require_once '../app/db.php';
 require_once '../app/inventarios.php';
+
 use App\Database;
 use App\inventarios;
 
@@ -34,8 +35,11 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 // Obtener y listar los inventarios de la base de datos, filtrando por el término de búsqueda
 $inventarios = $inventariosObj->getAllItems($searchTerm); // Aquí necesitas modificar tu método para aceptar el término de búsqueda
 
+$titulo = "Inventarios";
 // Contar el total de registros
 $totalRegistros = count($inventarios); // Contar los elementos en el array de inventarios
+include '../templates/header.php';  
+
 ?>
 
 <!DOCTYPE html>
@@ -44,10 +48,14 @@ $totalRegistros = count($inventarios); // Contar los elementos en el array de in
     <meta charset="UTF-8">
     <title>Inventarios</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <style>
         .btn-back {
             display: inline-block;
-            background-color: #007bff;
+            background-color: #1e3765            ;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -61,7 +69,7 @@ $totalRegistros = count($inventarios); // Contar los elementos en el array de in
         }
 
         .btn-back:hover {
-            background-color: #0056b3;
+            background-color: #1e3765;
             transform: scale(1.05);
         }
 
@@ -110,12 +118,6 @@ $totalRegistros = count($inventarios); // Contar los elementos en el array de in
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
         }
 
-        /* Añadir margen al contenido para que no quede debajo del header fijo */
-        body {
-            margin-top: 100px;
-        }
-        
-
         .total {
             position: fixed;
             bottom: 0;
@@ -144,41 +146,29 @@ $totalRegistros = count($inventarios); // Contar los elementos en el array de in
             align-items: center;
             margin-bottom: 20px;
             background-color: white;
-            position: fixed;
+            position: relative;
             top: 0;
             left: 0;
             width: 98%;
             padding: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-        }
+        }       
+
        
     </style>
 </head>
 <body>
 
-<div class="header">
+
+<!-- <div class="header">
     <a href="dashboard.php" style="text-decoration: none; color: black;">
-        <h1>Inventarios</h1>
+        <h5>Inventarios</h5>
     </a>
-    
-    
-    <!-- Formulario para cargar inventario -->
     <div class="search-container">
         <input type="text" id="search-input" class="search-input" placeholder="Buscar..." oninput="filterReports()">
     </div>
-
-    <!--div class="form-upload">                
-        <form action="cargar_inventario.php" method="post" enctype="multipart/form-data">
-            <label for="file-upload" class="custom-file-upload">
-                Seleccionar archivo
-            </label>
-            <span id="file-selected" class="file-box">Ningún archivo seleccionado</span>
-            <input type="file" name="file" id="file-upload" accept=".xlsx, .xls" required>
-            <button type="submit">Cargar Inventario</button>
-        </form>
-    </div!-->  
-</div>
+</div> -->
 
 <script>
     document.getElementById('file-upload').addEventListener('change', function() {
@@ -194,8 +184,8 @@ if (isset($_SESSION['error_message'])) {
     unset($_SESSION['error_message']); // Limpiar el mensaje de error después de mostrarlo
 }
 ?>
-
-<table>
+<div class="table-responsive">
+<table id="tablaInventarios" class="table table-striped table-hover dataTable display" style="heigth:400px">
     <thead>
         <tr>
             <th>Código</th>
@@ -260,9 +250,7 @@ if (isset($_SESSION['error_message'])) {
         <?php endforeach; ?>
     </tbody>
 </table>
-
-<!-- Mostrar el total de registros -->
-<div class="total">Total de registros: <?php echo $totalRegistros; ?></div>
+</div>
 
 <script>
     function filterReports() {
@@ -275,6 +263,17 @@ if (isset($_SESSION['error_message'])) {
         });
     }
     </script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+<script>
+    let table = $("#tablaInventarios").DataTable({
+            "oLanguage": {
+                "sUrl": "assets/js/datatables_es.json"
+            },
+            responsive: true,
+            pagingType: "full_numbers"
+        });
+</script>
 </body>
 </html>

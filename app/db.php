@@ -9,7 +9,6 @@ use PDOException;
 class Database {
     private $host = '127.0.0.1';
     private $db = 'reabastecimiento';
-    //private $db = 'reabastecimiento_QA';
     private $user = 'root'; 
     private $pass = ''; 
     private $charset = 'utf8mb4';
@@ -26,11 +25,15 @@ class Database {
         try {
             $this->pdo = new PDO($dsn, $this->user, $this->pass, $options);
         } catch (PDOException $e) {
-            // Manejo de errores de conexión
             error_log($e->getMessage(), 3, __DIR__ . '/../logs/error.log');
             echo 'Error de conexión a la base de datos.';
             exit;
         }
+    }
+
+    // Método para obtener la conexión
+    public function getConnection() {
+        return $this->pdo;
     }
 
     public function fetchAll($sql, $params = []) {
@@ -43,12 +46,12 @@ class Database {
             return false;
         }
     }
-        public function fetch($query, $params = []) {
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute($params);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        }
 
+    public function fetch($query, $params = []) {
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     public function execute($sql, $params = []) {
         try {

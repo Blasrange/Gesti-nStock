@@ -136,6 +136,7 @@ $reportes = $_SESSION['reportes'] ?? [];
 if (empty($reportes)) {
     unset($_SESSION['reportes']);
 }
+include '../templates/header.php';
 ?>
 
 <!DOCTYPE html>
@@ -148,7 +149,7 @@ if (empty($reportes)) {
     <style>
         /* Estilos personalizados */
         .btn-actualizar, .btn-descargar {
-            background-color: #81c781;
+            background-color: rgb(96, 129, 189);
             color: white;
             padding: 10px 20px;
             border: none;
@@ -159,13 +160,13 @@ if (empty($reportes)) {
             margin-right: 10px; /* Espacio entre botones */
         }
         .btn-actualizar:hover {
-            background-color: #218838;
+            background-color: #1e3765;
         }
         .btn-descargar {
-            background-color: #81c781;
+            background-color: rgb(96, 129, 189);
         }
         .btn-descargar:hover {
-            background-color: #218838;
+            background-color: #1e3765;
         }
         .form-upload {
             margin: 0;
@@ -297,5 +298,7 @@ if (empty($reportes)) {
     <div class="total">
         <p>Total de registros: <?php echo count($reportes); ?></p>
     </div>
+
+    
 </body>
 </html>

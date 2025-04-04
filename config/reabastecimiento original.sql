@@ -209,10 +209,10 @@ ENGINE=InnoDB
 -- Insertar clientes
 INSERT INTO `clientes` (`nombre`, `email`, `telefono`, `ciudad_id`, `created_at`)
 VALUES 
-    ('RECAMIER S.A.', 'ecastano@recamier.com', '3164782401', 1, NOW()),
-    ('CATALYST', 'admin@mdlz.com', '(57)0000000', 1, NOW()),
-    ('(LEBON) MONDELEZ TAT MED', 'adminmed@mdlz.com', '4310400', 4, NOW()),
-    ('SABAMA LTDA', 'ssalinas@alfaparf.com.co', '3183366034', 3, NOW());
+    ('RECAMIER S.A.', 'ecastano@recamier.com', '3164782401', 8, NOW()),
+    ('CATALYST', 'admin@mdlz.com', '(57)0000000', 8, NOW()),
+    ('(LEBON) MONDELEZ TAT MED', 'adminmed@mdlz.com', '4310400', 11, NOW()),
+    ('SABAMA LTDA', 'ssalinas@alfaparf.com.co', '3183366034', 12, NOW());
 ------------------------------------------------------------------------------------
 -- Insertar ciudades
 INSERT INTO `ciudades` (`nombre`, `estado`, `pais`, `codigo`) 
@@ -226,20 +226,20 @@ VALUES
 INSERT INTO users (
     username, password, cliente_id, created_at
 ) VALUES 
-('Blas Rangel', '$2y$10$iu9ejnvSH9PNtgoAKlkmqOF0/BkSvbgz8lfMi.7Ove5Luu0PB4Pum', 13);
+('Blas Rangel', '$2y$10$RqT.xKdtmVGf0ixzgC24ae8fySeh68uLshDaWHyQsMAvvxTGQBIje', 13);
 ------------------------------------------------------------------------------------
 -- Insertar usuario_clientes
 INSERT INTO `usuario_clientes` (`user_id`, `cliente_id`, `created_at`)
 VALUES 
-    (26, 13, NOW()),
-    (26, 14, NOW()),
-    (26, 15, NOW()),
-    (26, 16, NOW());
+    (9, 27, NOW()),
+    (9, 29, NOW()),
+    (9, 30, NOW()),
+    (9, 33, NOW());
 ------------------------------------------------------------------------------------
 -- Insertar estados cliente con ID 1
 INSERT INTO estado_cliente (cliente_id, estado, descripcion, created_at) VALUES
-(15, 'DSP (Disponible)', 'Disponible para reabastecimiento'),
-(16, 'DISPONIBLE', 'Disponible para reabastecimiento')
-(13, '13 - CCL  DISPONIBLE', 'Disponible para reabastecimiento'),
-(14, 'DSP  (Disponible)', 'Disponible para reabastecimiento');
+(33, 'DSP (Disponible)', 'Disponible para reabastecimiento'),
+(33, 'DISPONIBLE', 'Disponible para reabastecimiento')
+(27, '13 - CCL  DISPONIBLE', 'Disponible para reabastecimiento'),
+(29, 'DSP  (Disponible)', 'Disponible para reabastecimiento');
 ------------------------------------------------------------------------------------

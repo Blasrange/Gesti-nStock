@@ -34,64 +34,88 @@ $clientes = $stmt->fetchAll();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seleccionar Cliente y Ciudad</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
     <style>
-    /* Estilos básicos para el formulario */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #eef2f3;
-        background-image: url('assets/images/Logistica.jpg');
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        height: 100vh;
-        justify-content: center;
-        align-items: center;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .selection-container {
-        background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semitransparente */
-        padding: 20px 30px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 400px;
-    }
-    .selection-container h2 {
-        margin-bottom: 20px;
-        text-align: center;
-        color: #333;
-    }
-    .selection-container label {
-        display: block;
-        margin-top: 10px;
-        color: #555;
-    }
-    .selection-container select {
-        width: 100%;
-        padding: 8px 10px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .selection-container button {
-        margin-top: 15px;
-        width: 100%;
-        padding: 10px;
-        background-color: #5cb85c;
-        border: none;
-        color: #fff;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-    .selection-container button:hover {
-        background-color: #4cae4c;
-    }
-</style>
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            background: url('assets/images/Logistica.jpg') no-repeat center center/cover;
+            position: relative;
+        }
 
+        /* Capa de oscurecimiento sobre la imagen de fondo */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .selection-container {
+            position: relative;
+            z-index: 2;
+            width: 350px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            margin-right: 10%;
+        }
+
+        .selection-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .selection-container label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+        }
+
+        .selection-container select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .selection-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .selection-container button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
     <script>
-        // Función para cargar ciudades usando AJAX
         function loadCities() {
             var clienteId = document.getElementById("cliente").value;
             var ciudadSelect = document.getElementById("ciudad");

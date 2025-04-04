@@ -45,7 +45,7 @@ $database = new Database();
             display: inline-block;
             padding: 10px 15px;
             cursor: pointer;
-            background-color: #28a745;
+            background-color: #1e3765;
             color: white;
             border-radius: 5px;
             text-align: center;
@@ -53,7 +53,7 @@ $database = new Database();
             transition: background-color 0.3s;
         }        
         .custom-file-upload:hover {
-            background-color: #218838; 
+            background-color: #1e3765; 
         }
 
         .file-box {
@@ -68,7 +68,7 @@ $database = new Database();
 
         .upload-button {
             padding: 12px 15px;
-            background-color: #28a745;
+            background-color: #1e3765;
             color: white;
             border: none;
             border-radius: 5px;
@@ -78,7 +78,7 @@ $database = new Database();
         }
 
         .upload-button:hover {
-            background-color: #218838;
+            background-color: #1e3765;
         }
 
         .error {

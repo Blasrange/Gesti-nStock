@@ -11,7 +11,6 @@ class Reports {
         date_default_timezone_set('America/Bogota');
     }
     
-
     // Función para generar los reportes
     public function generateReports($cliente_id) {
         $replenishments = $this->getReplenishmentsByClient($cliente_id);
@@ -27,7 +26,7 @@ class Reports {
 
         foreach ($replenishments as $replenishment) {
             $unidadesReabastecer = $replenishment['unidades_reabastecer'] ?? 0;
-            $embalaje = $this->getEmbalajeBySKU($replenishment['sku']);
+            $embalaje = $replenishment['embalaje']; // Obtener embalaje desde reabastecimientos
             $cajasReabastecer = $embalaje > 0 ? ceil($unidadesReabastecer / $embalaje) : 0;
             $createdAt = date('Y-m-d H:i:s');
 
@@ -63,15 +62,6 @@ class Reports {
                     ]
                 );
 
-                // Obtener el valor actualizado de cajas_reabastecer inmediatamente después de la inserción/actualización
-                $cajasReabastecerActualizado = $this->db->fetch(
-                    "SELECT cajas_reabastecer FROM reportes WHERE sku = ? AND cliente_id = ?",
-                    [$replenishment['sku'], $cliente_id]
-                )['cajas_reabastecer'] ?? 0;
-
-                // Actualizar el valor en el array de reportes generados
-                $replenishment['cajas_reabastecer'] = $cajasReabastecerActualizado;
-
                 if ($result) {
                     $this->log("Reporte generado/actualizado para SKU: " . $replenishment['sku']);
                     $reportesGenerados[] = $replenishment;
@@ -98,12 +88,6 @@ class Reports {
         $this->db->execute($query, [$cliente_id]);
     }
 
-    private function getEmbalajeBySKU($sku) {
-        $query = "SELECT embalaje FROM maestra_materiales WHERE sku = ?";
-        $result = $this->db->fetch($query, [$sku]);
-        return $result['embalaje'] ?? 0;
-    }
-
     private function getReplenishmentsByClient($cliente_id) {
         $query = "SELECT r.id, 
                          r.sku, 
@@ -114,6 +98,7 @@ class Reports {
                          r.localizacion_destino, 
                          r.estado, 
                          r.unidades_reabastecer, 
+                         r.embalaje, 
                          IFNULL(rep.cajas_reabastecer, 0) AS cajas_reabastecer, 
                          r.created_at, 
                          r.cliente_id

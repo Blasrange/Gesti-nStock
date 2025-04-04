@@ -61,7 +61,7 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
     <style>
         .btn-back {
             display: inline-block;
-            background-color: #007bff;
+            background-color: #1e3765;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -75,12 +75,12 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
         }
 
         .btn-back:hover {
-            background-color: #0056b3;
+            background-color: #1e3765;
             transform: scale(1.05);
         }
 
         .btn-actualizar {
-            background-color: #81c781;
+            background-color:rgb(96, 129, 189);
             color: white;
             padding: 10px 20px;
             border: none;
@@ -92,7 +92,7 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
         }
 
         .btn-actualizar:hover {
-            background-color: #218838;
+            background-color: #1e3765;
         }
 
         .form-upload {
@@ -189,6 +189,7 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
                 <th>LPN Inventario</th>
                 <th>Localización Origen</th>
                 <th>Unidades a Reabastecer</th>
+                <th>Embalaje</th>
                 <th>Lote</th>
                 <th>Fecha Vencimiento</th>
                 <th>LPN Max Min</th>
@@ -205,6 +206,7 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
                         <td><?php echo htmlspecialchars($reabastecimiento['lpn_inventario'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['localizacion_origen'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['unidades_reabastecer']); ?></td>
+                        <td><?php echo htmlspecialchars($reabastecimiento['embalaje'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['lote']); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['fecha_vencimiento'] ?? ''); ?></td>
                         <td><?php echo htmlspecialchars($reabastecimiento['lpn_max_min'] ?? ''); ?></td>

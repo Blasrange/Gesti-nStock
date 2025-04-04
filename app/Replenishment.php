@@ -11,16 +11,16 @@ class Replenishment {
     }
 
     public function generateReplenishments($clienteId) {
-        // Obtener la lista de materiales para el cliente específico
-        $materials = $this->db->fetchAll("SELECT * FROM maestra_materiales WHERE cliente_id = ?", [$clienteId]);
+        // Obtener la lista de materiales con embalaje
+        $materials = $this->db->fetchAll("SELECT sku, lpn, localizacion, stock_minimo, stock_maximo, descripcion, embalaje FROM maestra_materiales WHERE cliente_id = ?", [$clienteId]);
 
         if ($materials === false) {
             error_log("Error al obtener la maestra de materiales para el cliente ID: $clienteId.", 3, __DIR__ . '/../logs/replenishment.log');
             return [];
         }
 
-        $replenishments = []; // Inicializar el arreglo para almacenar reabastecimientos
-        $excludePrefixes = ['PS', 'PTF', 'P30', 'P40', 'P50']; // Prefijos a excluir
+        $replenishments = [];
+        $excludePrefixes = ['PS', 'PTF', 'P30', 'P40', 'P50'];
 
         foreach ($materials as $material) {
             $sku = $material['sku'];
@@ -29,8 +29,8 @@ class Replenishment {
             $stockMin = $material['stock_minimo'];
             $stockMax = $material['stock_maximo'];
             $descripcion = $material['descripcion'];
+            $embalaje = $material['embalaje'];
 
-            // Verificar el estado permitido para este cliente
             $estadoPermitido = $this->db->fetchOne("SELECT estado FROM estado_cliente WHERE cliente_id = ?", [$clienteId]);
 
             if (!$estadoPermitido) {
@@ -38,7 +38,6 @@ class Replenishment {
                 continue;
             }
 
-            // Verificar el stock actual del inventario para este SKU, localización específica, y estado permitido
             $inventory = $this->db->fetchAll(
                 "SELECT * FROM inventarios WHERE sku = ? AND localizacion = ? AND estado = ? AND cliente_id = ? ORDER BY fecha_vencimiento ASC", 
                 [$sku, $localizacionMaestra, $estadoPermitido, $clienteId]
@@ -49,7 +48,6 @@ class Replenishment {
                 continue;
             }
 
-            // Calcular el total disponible en la ubicación de la maestra de materiales
             $totalAvailableMaestra = 0;
             $loteMaestra = null;
             $fechaVencimientoMaestra = null;
@@ -57,7 +55,6 @@ class Replenishment {
             foreach ($inventory as $item) {
                 $totalAvailableMaestra += $item['disponible'];
 
-                // Obtener lote y fecha de vencimiento del inventario
                 if ($loteMaestra === null && $item['disponible'] > 0) {
                     $loteMaestra = $item['lote'];
                     $fechaVencimientoMaestra = $item['fecha_vencimiento'];
@@ -65,11 +62,9 @@ class Replenishment {
                 }
             }
 
-            // Si el stock disponible en la localización de la maestra está por debajo del mínimo
             if ($totalAvailableMaestra < $stockMin) {
                 $unitsToReplenish = $stockMax - $totalAvailableMaestra;
 
-                // Buscar en otras localizaciones del mismo SKU, estado permitido, y ordenado por fecha de vencimiento (FEFO)
                 $inventoryOtherLocations = $this->db->fetchAll(
                     "SELECT * FROM inventarios WHERE sku = ? AND localizacion != ? AND estado = ? AND cliente_id = ? AND 
                     localizacion NOT LIKE '%10' AND localizacion NOT LIKE '%10-2' 
@@ -82,12 +77,11 @@ class Replenishment {
                     continue;
                 }
 
-                // Filtrar las ubicaciones que comienzan con los prefijos excluidos
                 foreach ($inventoryOtherLocations as $key => $otherLocationItem) {
                     foreach ($excludePrefixes as $prefix) {
                         if (strpos($otherLocationItem['localizacion'], $prefix) === 0) {
-                            unset($inventoryOtherLocations[$key]); // Eliminar ubicación excluida
-                            break; // Salir del bucle de prefijos
+                            unset($inventoryOtherLocations[$key]);
+                            break;
                         }
                     }
                 }
@@ -102,22 +96,20 @@ class Replenishment {
                     $fechaVencimiento = $otherLocationItem['fecha_vencimiento'];
                     $estado = $otherLocationItem['estado'];
 
-                    // Si hay unidades disponibles en esta localización
                     if ($availableInOtherLocation > 0) {
                         $unitsToTake = min($availableInOtherLocation, $unitsToReplenish - $totalTaken);
 
-                        // Solo proceder si las unidades a reabastecer son mayores a 10
                         if ($unitsToTake > 10) {
-                            // Intentar insertar en la tabla de reabastecimientos
                             $result = $this->db->execute(
-                                "INSERT INTO reabastecimientos (sku, descripcion, lpn_inventario, localizacion_origen, unidades_reabastecer, lote, fecha_vencimiento, lpn_max_min, localizacion_destino, estado, cliente_id, created_at) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                                "INSERT INTO reabastecimientos (sku, descripcion, lpn_inventario, localizacion_origen, unidades_reabastecer, lote, fecha_vencimiento, lpn_max_min, localizacion_destino, estado, embalaje, cliente_id, created_at) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                                 ON DUPLICATE KEY UPDATE 
                                 unidades_reabastecer = VALUES(unidades_reabastecer), 
                                 lote = VALUES(lote), 
                                 fecha_vencimiento = VALUES(fecha_vencimiento), 
-                                estado = VALUES(estado)", 
-                                [$sku, $descripcion, $lpnInventario, $localizacionOrigen, $unitsToTake, $lote, $fechaVencimiento, $lpnMaestra, $localizacionMaestra, $estado, $clienteId]
+                                estado = VALUES(estado), 
+                                embalaje = VALUES(embalaje)", 
+                                [$sku, $descripcion, $lpnInventario, $localizacionOrigen, $unitsToTake, $lote, $fechaVencimiento, $lpnMaestra, $localizacionMaestra, $estado, $embalaje, $clienteId]
                             );
 
                             if (!$result) {
@@ -125,7 +117,6 @@ class Replenishment {
                             } else {
                                 error_log("Reabastecimiento generado para SKU: $sku con unidades: $unitsToTake para cliente ID: $clienteId", 3, __DIR__ . '/../logs/replenishment.log');
 
-                                // Agregar a la lista de reabastecimientos generados
                                 $replenishments[] = [
                                     'sku' => $sku,
                                     'descripcion' => $descripcion,
@@ -137,14 +128,14 @@ class Replenishment {
                                     'lpn_max_min' => $lpnMaestra,
                                     'localizacion_destino' => $localizacionMaestra,
                                     'estado' => $estado,
+                                    'embalaje' => $embalaje,
                                     'cliente_id' => $clienteId,
-                                    'created_at' => date('Y-m-d H:i:s'), // Para referencia, aunque la base de datos ya manejará la fecha
+                                    'created_at' => date('Y-m-d H:i:s'),
                                 ];
 
                                 $totalTaken += $unitsToTake;
                             }
 
-                            // Si ya hemos tomado suficientes unidades, salir del loop
                             if ($totalTaken >= $unitsToReplenish) {
                                 break;
                             }
@@ -154,25 +145,21 @@ class Replenishment {
             }
         }
 
-        // Eliminar reabastecimientos que no están en los nuevos
         $this->removeObsoleteReplenishments($clienteId, $replenishments);
 
-        return $replenishments; // Retornar la lista de reabastecimientos generados
+        return $replenishments;
     }
 
     private function removeObsoleteReplenishments($clienteId, $newReplenishments) {
-        // Crear un array de SKUs y LPNs de los nuevos reabastecimientos
         $existingKeys = [];
         foreach ($newReplenishments as $reabastecimiento) {
             $existingKeys[] = $reabastecimiento['sku'] . '|' . $reabastecimiento['lpn_inventario'];
         }
 
-        // Obtener todos los reabastecimientos actuales
         $currentReplenishments = $this->db->fetchAll("SELECT * FROM reabastecimientos WHERE cliente_id = ?", [$clienteId]);
 
         foreach ($currentReplenishments as $current) {
             $key = $current['sku'] . '|' . $current['lpn_inventario'];
-            // Si no está en los nuevos, eliminar
             if (!in_array($key, $existingKeys)) {
                 $this->db->execute("DELETE FROM reabastecimientos WHERE id = ?", [$current['id']]);
                 error_log("Reabastecimiento obsoleto eliminado para SKU: {$current['sku']}", 3, __DIR__ . '/../logs/replenishment.log');

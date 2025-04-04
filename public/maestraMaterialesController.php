@@ -82,7 +82,7 @@ if (isset($_GET['edit_id'])) {
     <style>
         .btn-back {
             display: inline-block;
-            background-color: #007bff;
+            background-color: #1e3765;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -96,7 +96,7 @@ if (isset($_GET['edit_id'])) {
         }
 
         .btn-back:hover {
-            background-color: #0056b3;
+            background-color: #1e3765;
             transform: scale(1.05);
         }
 
@@ -187,7 +187,7 @@ if (isset($_GET['edit_id'])) {
         }
 
         #openModal {
-            background-color: #81c781;
+            background-color:rgb(96, 129, 189);
             color: white;
             padding: 10px 20px;
             border: none;
@@ -198,7 +198,7 @@ if (isset($_GET['edit_id'])) {
         }
 
         #openModal:hover {
-            background-color: #28a745;
+            background-color: #1e3765;
         }
         .search-input {
             padding: 8px;
@@ -334,7 +334,7 @@ if (isset($_GET['edit_id'])) {
                     <td><?= htmlspecialchars($material['stock_maximo']); ?></td>
                     <td><?= htmlspecialchars($material['embalaje']); ?></td>
                     <td>
-                        <a href="maestraMaterialesController.php?edit_id=<?= $material['id']; ?>" class="btn-editar">Editar</a>
+                    <a href="maestraMaterialesController.php?edit_id=<?= $material['id']; ?>" class="btn-editar">Editar</a>
                         <form method="POST" style="display:inline;">
                             <input type="hidden" name="id" value="<?= $material['id']; ?>">
                             <input type="hidden" name="action" value="delete">

@@ -76,7 +76,7 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
     <style>
         .btn-back {
             display: inline-block;
-            background-color: #007bff;
+            background-color: rgb(96, 129, 189);
             color: white;
             padding: 12px 20px;
             border: none;
@@ -90,12 +90,12 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
         }
 
         .btn-back:hover {
-            background-color: #0056b3;
+            background-color: rgb(96, 129, 189);
             transform: scale(1.05);
         }
 
         .btn-actualizar {
-            background-color: #28a745;
+            background-color: rgb(96, 129, 189);
             color: white;
             padding: 10px 20px;
             border: none;
@@ -107,7 +107,7 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
         }
 
         .btn-actualizar:hover {
-            background-color: #218838;
+            background-color: rgb(96, 129, 189);
         }
 
         .form-upload {

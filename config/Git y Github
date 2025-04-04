@@ -48,7 +48,7 @@ git status -s -b
 git status -sb //Hace lo mismo que el comando anterior
 
 # Crear repositorio (HTTPS)
-git remote add origin https://github.com/Blasrange/reabastecimiento.git
+git remote add origin https://github.com/Blasrange/Gesti-nStock.git
 git push -u origin main
 
 # Remover el repositorio remoto
@@ -70,9 +70,7 @@ ssh -T git@github.com
 # Push
 Para futuros cambios y subir los registros a github ejecutar:
 
-git add .
-git commit -m "nuevo commit"
-git push -u origin main
+git add . ; git commit -m "avance tabla inventarios" ; git push -u origin main
 
 # Clonar repositorio
 Para descargar un repositorio completo basta con tomar la url ej: https://github.com/Blasrange/reabastecimiento.git y ejecutar el siguiente comando en alguna carpeta de su computadora.
