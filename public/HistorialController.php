@@ -198,7 +198,7 @@ include '../templates/header.php';
                         <button type="submit" name="actualizar" class="btn btn-dark btn-small">Actualizar</button>
                     </form>
                 </div>           
-                <table id="tablahistorial" class="table table-striped table-hover dataTable display" style="heigth:400px">
+                <table id="tablahistorial" class="table table-striped table-hover dataTable display">
                 <thead>
                 <tr>
                     <th style="text-align: center">Fecha/Hora</th>

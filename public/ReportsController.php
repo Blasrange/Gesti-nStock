@@ -264,7 +264,7 @@ include '../templates/header.php';
                 <input type="submit" name="descargar_excel" class="btn btn-dark btn-small" value="Descargar Excel">
                 </form>
             </div>           
-            <table id="tablareportes" class="table table-striped table-hover dataTable display" style="heigth:400px">                    
+            <table id="tablareportes" class="table table-striped table-hover dataTable display">                    
             <thead>
                 <tr>
                     <th style="text-align: center">SKU</th>
