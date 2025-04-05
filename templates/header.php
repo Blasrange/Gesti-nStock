@@ -56,11 +56,11 @@
                         <li><a class="dropdown-item" href="ReabastecimientosController.php"><i class="fas fa-arrow-up"></i> Reabastecimientos</a></li>
                         <li><a class="dropdown-item" href="ReportsController.php"><i class="fas fa-chart-line"></i> Reportes</a></li>
                         <li><a class="dropdown-item" href="HistorialController.php"><i class="fas fa-history"></i> Historial</a></li>
+                        <li><a class="dropdown-item" href="UsuarioController.php"><i class="fas fa-user"></i> Usuario</a></li>
                         <li><a class="dropdown-item" href="modulo_carga.php"><i class="fas fa-upload"></i> Interfaces</a></li>
                     </ul>
                 </li>
             </ul>
-
             <!-- Menú de usuario -->
             <div class="dropdown">
                 <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
@@ -83,13 +83,13 @@
           <span class="visually-hidden">Home</span>
         </a>
       </li>
-      <li class="breadcrumb-item">
-        <a class="link-body-emphasis fw-semibold text-decoration-none" href="#">Administración</a>
-      </li>
+      <?php if(isset($titulo)): ?>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" href="#">Administración</a>
+        </li>
+      <?php endif; ?>
       <li class="breadcrumb-item active" aria-current="page">
-      <?php echo $titulo??'Reabastecimiento';?>
-      </li>
-      <li class="breadcrumb-item active" aria-current="page">
+        <?php echo $titulo ?? 'Home';?>
       </li>
     </ol>
     </nav>

@@ -72,6 +72,10 @@ $materialToEdit = null;
 if (isset($_GET['edit_id'])) {
     $materialToEdit = $maestraMaterialesObj->getMaterialById($_GET['edit_id']);
 }
+
+$titulo = "Maestra de Materiales";
+include '../templates/header.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -79,10 +83,14 @@ if (isset($_GET['edit_id'])) {
     <meta charset="UTF-8">
     <title>Maestra de Materiales</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <style>
         .btn-back {
             display: inline-block;
-            background-color: #1e3765;
+            background-color: #1e3765            ;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -120,22 +128,29 @@ if (isset($_GET['edit_id'])) {
             align-items: center;
             margin-bottom: 20px;
             background-color: white; /* Fondo blanco */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 98%;
-            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
         }
 
         .header h1 {
             margin: 0;
         }
 
-        /* Añadir margen al contenido para que no quede debajo del header fijo */
-        body {
-            margin-top: 100px;
+        /*.error-message {
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid red;
+            background-color: #ffe6e6; /* Fondo claro para destacar el error */
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 98%;
+            background-color: white;
+            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
         }
 
         .total {
@@ -149,56 +164,8 @@ if (isset($_GET['edit_id'])) {
             z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
         }
 
-        /* Estilo del modal */
-        .modal {
-            display: none; /* Oculto por defecto */
-            position: fixed; /* Queda fijo en la pantalla */
-            z-index: 1000; /* Por encima de otros elementos */
-            left: 0;
-            top: 0;
-            width: 100%; /* Ancho completo */
-            height: 100%; /* Alto completo */
-            overflow: auto; /* Activa el scroll si es necesario */
-            background-color: rgb(0,0,0); /* Color de fondo negro */
-            background-color: rgba(0,0,0,0.4); /* Fondo con opacidad */
-        }
-
-        .modal-content {
-            background-color: #f8f9fa;
-            margin: 15% auto; /* 15% desde arriba y centrado */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Ancho del modal */
-            border-radius: 0px; /* Bordes redondeados */
-        }
-
-        .close {
-            color: #aaa;
-            float: right; /* A la derecha */
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        #openModal {
-            background-color:rgb(96, 129, 189);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 2px 0;
-            transition: background-color 0.3s;
-        }
-
-        #openModal:hover {
-            background-color: #1e3765;
+        .search-container {
+            text-align: right;
         }
         .search-input {
             padding: 8px;
@@ -206,27 +173,106 @@ if (isset($_GET['edit_id'])) {
             border-radius: 5px;
             border: 1px solid #ccc;
             width: 200px;
+            margin-left: auto;
         }
-        .search-container {
-            margin-left: auto; /* Mueve el contenedor de búsqueda a la derecha */
-            margin-right: 20px; /* Añade espacio a la derecha */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: white;
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 98%;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }       
+
+        td {
+            text-align: center; /* Centra el contenido de la celda */
+            vertical-align: middle; /* Alinea verticalmente los botones */
         }
+
+        .btn-editar, .btn-eliminar {
+            background-color: #212529; /* Color de fondo similar al de la imagen */
+            color: white; /* Color del texto */
+            padding: 8px 10px; /* Espaciado */
+            border: none; /* Quitar borde */
+            border-radius: 6px; /* Bordes redondeados */
+            cursor: pointer;
+            text-decoration: none; /* Para enlaces */
+            display: inline-block;
+            font-size: 16px;
+            margin: 2px; /* Espaciado entre botones */
+        }
+
+        .btn-editar:hover, .btn-eliminar:hover {
+            background-color: #343a40; /* Un color más claro para el efecto hover */
+        }
+
+        .acciones {
+            display: flex;
+            justify-content: center; /* Centrar horizontalmente los botones */
+            gap: 10px; /* Espacio entre botones */
+        }       
+
+        .modal-content {
+        border-radius: 1rem;
+    }
+
+    .btn-success {
+        background-color: #343a40;
+        color: #343a40;
+        border: none;
+    }
+
+    .btn-outline-secondary {
+        background-color: #f8f9fa;
+        color: #6c757d;
+    }
+
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+    }
+
+    label {
+        font-weight: 500;
+    }
+
+    .modal-content {
+        border-radius: 1rem;
+    }
+
+    .btn-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: none;
+    }
+
+    .btn-primary {
+        background-color: #343a40;
+        color:#343a40;
+        border: none;
+    }
+
+    .btn-outline-secondary {
+        background-color: #343a40;
+        color: #6c757d;
+    }
+
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+    }
+
+    label {
+        font-weight: 500;
+    }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <a href="dashboard.php" style="text-decoration: none; color: black;">
-        <h1>Maestra de Materiales</h1>
-    </a>
-    
-    <div class="search-container" style="margin-left: auto; margin-right: 10px;">
-        <input type="text" id="search-input" class="search-input" placeholder="Buscar..." oninput="filterReports()">
-    </div>
-
-    <!-- Botón para abrir el modal de agregar material -->
-    <button id="openModal">Agregar Material</button>
-</div>
 <script>
     document.getElementById('file-upload').addEventListener('change', function() {
         var fileName = this.files[0] ? this.files[0].name : 'Ningún archivo seleccionado';
@@ -234,36 +280,124 @@ if (isset($_GET['edit_id'])) {
     });
 </script>
 
-<!-- Modal para agregar material -->
-<div id="materialModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Agregar Nuevo Material</h2>
-        <form action="maestraMaterialesController.php" method="post">
-            <input type="hidden" name="action" value="add">
-            <label>SKU:</label>
-            <input type="text" name="sku" required>
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="materialModal" tabindex="-1" aria-labelledby="materialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="materialModalLabel">Agregar Nuevo Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+            <form id="formMaterial" action="maestraMaterialesController.php" method="post" class="row g-3">
+                    <input type="hidden" name="action" value="add">
 
-            <label>LPN:</label>
-            <input type="text" name="lpn" required>
+                    <div class="col-md-6">
+                        <label for="sku" class="form-label">SKU:</label>
+                        <input type="text" class="form-control" id="sku" name="sku" required>
+                    </div>
 
-            <label>Localización:</label>
-            <input type="text" name="localizacion" required>
+                    <div class="col-md-6">
+                        <label for="lpn" class="form-label">LPN:</label>
+                        <input type="text" class="form-control" id="lpn" name="lpn" required>
+                    </div>
 
-            <label>Descripción:</label>
-            <input type="text" name="descripcion" required>
+                    <div class="col-md-6">
+                        <label for="localizacion" class="form-label">Localización:</label>
+                        <input type="text" class="form-control" id="localizacion" name="localizacion" required>
+                    </div>
 
-            <label>Stock Mínimo:</label>
-            <input type="number" name="stock_minimo" required>
+                    <div class="col-md-6">
+                        <label for="descripcion" class="form-label">Descripción:</label>
+                        <input type="text" class="form-control" id="descripcion" name="descripcion" required>
+                    </div>
 
-            <label>Stock Máximo:</label>
-            <input type="number" name="stock_maximo" required>
+                    <div class="col-md-6">
+                        <label for="stock_minimo" class="form-label">Stock Mínimo:</label>
+                        <input type="number" class="form-control" id="stock_minimo" name="stock_minimo" required>
+                    </div>
 
-            <label>Embalaje:</label>
-            <input type="text" name="embalaje" required>
+                    <div class="col-md-6">
+                        <label for="stock_maximo" class="form-label">Stock Máximo:</label>
+                        <input type="number" class="form-control" id="stock_maximo" name="stock_maximo" required>
+                    </div>
 
-            <button type="submit">Agregar</button>
-        </form>
+                    <div class="col-md-6">
+                        <label for="embalaje" class="form-label">Embalaje:</label>
+                        <input type="text" class="form-control" id="embalaje" name="embalaje" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="submit" class="btn btn-dark" form="formMaterial">Agregar</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<?php if (isset($_SESSION['success_message'])): ?>
+    <div class="alert alert-success">
+        <?= $_SESSION['success_message']; ?>
+        <?php unset($_SESSION['success_message']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error_message'])): ?>
+    <div class="alert alert-danger">
+        <?= $_SESSION['error_message']; ?>
+        <?php unset($_SESSION['error_message']); ?>
+    </div>
+<?php endif; ?>
+
+<div style="margin-left: 20px; margin-right: 20px">    
+    <div class="table-responsive">       
+        <div class="search-container"> 
+            <button type="submit" class="btn btn-dark btn-small" data-bs-toggle="modal" data-bs-target="#materialModal">Agregar Material</button>           
+        </div>        
+        <table id="tablamaestra_de_materiales" class="table table-striped table-hover dataTable display">
+            <thead>
+                <tr>
+                    <th style="text-align: center">SKU</th>
+                    <th tyle="text-align: center;">LPN</th>
+                    <th style="text-align: center;">Localización</th>
+                    <th style="text-align: center;">Descripción</th>
+                    <th style="text-align: center;">Stock Mínimo</th>
+                    <th style="text-align: center;">Stock Máximo</th>
+                    <th style="text-align: center;">Embalaje</th>
+                    <th style="text-align: center;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($totalRegistros > 0): ?>
+                    <?php foreach ($materiales as $material): ?>
+                        <tr>
+                            <td style="text-align: center;"><?= htmlspecialchars($material['sku']); ?></td>
+                            <td style="text-align: center;"><?= htmlspecialchars($material['lpn']); ?></td>
+                            <td style="text-align: center;"><?= htmlspecialchars($material['localizacion']); ?></td>
+                            <td style="text-align: center;"><?= htmlspecialchars($material['descripcion']); ?></td>
+                            <td style="text-align: center;"><?= htmlspecialchars($material['stock_minimo']); ?></td>
+                            <td style="text-align: center;"><?= htmlspecialchars($material['stock_maximo']); ?></td>
+                            <td style="text-align: center;"><?= htmlspecialchars($material['embalaje']); ?></td>
+                            <td>
+                            <a href="maestraMaterialesController.php?edit_id=<?= $material['id']; ?>" class="btn-editar">Editar</a>
+                                <form method="POST" style="display:inline;">
+                                    <input type="hidden" name="id" value="<?= $material['id']; ?>">
+                                    <input type="hidden" name="action" value="delete">
+                                    <button type="submit" class="btn-eliminar" onclick="return confirm('¿Estás seguro de que deseas eliminar este material?');">Eliminar</button>
+                                </form>                                
+                            </td>
+
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="8">No se encontraron materiales.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -293,105 +427,89 @@ if (isset($_GET['edit_id'])) {
             modal.style.display = "none";
         }
     }
+        <script>
+            function cerrarModal() {
+                let modal = document.getElementById('editModal');
+                let modalBootstrap = bootstrap.Modal.getInstance(modal);
+                modalBootstrap.hide();
+        }
 </script>
 
-<?php if (isset($_SESSION['success_message'])): ?>
-    <div class="alert alert-success">
-        <?= $_SESSION['success_message']; ?>
-        <?php unset($_SESSION['success_message']); ?>
-    </div>
-<?php endif; ?>
 
-<?php if (isset($_SESSION['error_message'])): ?>
-    <div class="alert alert-danger">
-        <?= $_SESSION['error_message']; ?>
-        <?php unset($_SESSION['error_message']); ?>
-    </div>
-<?php endif; ?>
 
-<table>
-    <thead>
-        <tr>
-            <th>SKU</th>
-            <th>LPN</th>
-            <th>Localización</th>
-            <th>Descripción</th>
-            <th>Stock Mínimo</th>
-            <th>Stock Máximo</th>
-            <th>Embalaje</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if ($totalRegistros > 0): ?>
-            <?php foreach ($materiales as $material): ?>
-                <tr>
-                    <td><?= htmlspecialchars($material['sku']); ?></td>
-                    <td><?= htmlspecialchars($material['lpn']); ?></td>
-                    <td><?= htmlspecialchars($material['localizacion']); ?></td>
-                    <td><?= htmlspecialchars($material['descripcion']); ?></td>
-                    <td><?= htmlspecialchars($material['stock_minimo']); ?></td>
-                    <td><?= htmlspecialchars($material['stock_maximo']); ?></td>
-                    <td><?= htmlspecialchars($material['embalaje']); ?></td>
-                    <td>
-                    <a href="maestraMaterialesController.php?edit_id=<?= $material['id']; ?>" class="btn-editar">Editar</a>
-                        <form method="POST" style="display:inline;">
-                            <input type="hidden" name="id" value="<?= $material['id']; ?>">
-                            <input type="hidden" name="action" value="delete">
-                            <button type="submit" class="btn-eliminar" onclick="return confirm('¿Estás seguro de que deseas eliminar este material?');">Eliminar</button>
-                        </form>
-                        
-                    </td>
+</script>
 
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="8">No se encontraron materiales.</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
 
-<?php if ($totalRegistros > 0): ?>
-    <div class="total">Total de registros: <?= $totalRegistros; ?></div>
-<?php endif; ?>
-
-<!-- Formulario de edición si existe un material para editar -->
+<!-- Botón para abrir el modal de edición (se muestra solo si hay un material para editar) -->
 <?php if ($materialToEdit): ?>
-    <div id="editModal" class="modal" style="display:block;">
-        <div class="modal-content">
-            <span class="close" onclick="document.getElementById('editModal').style.display='none'">&times;</span>
-            <h2>Editar Material</h2>
-            <form action="maestraMaterialesController.php" method="post">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="id" value="<?= $materialToEdit['id']; ?>">
-                <label>SKU:</label>
-                <input type="text" name="sku" value="<?= htmlspecialchars($materialToEdit['sku']); ?>" required>
+<!-- Modal Bootstrap de Edición -->
+<div class="modal fade show" id="editModal" tabindex="-1" style="display:block;" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="editModalLabel">Editar Material</h5>
+                <button type="button" class="btn-close" onclick="cerrarModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form action="maestraMaterialesController.php" method="post" class="row g-3" id="formEditarMaterial">
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="id" value="<?= $materialToEdit['id']; ?>">
 
-                <label>LPN:</label>
-                <input type="text" name="lpn" value="<?= htmlspecialchars($materialToEdit['lpn']); ?>" required>
+                    <div class="col-md-6">
+                        <label for="sku" class="form-label">SKU:</label>
+                        <input type="text" class="form-control" name="sku" value="<?= htmlspecialchars($materialToEdit['sku']); ?>" required>
+                    </div>
 
-                <label>Localización:</label>
-                <input type="text" name="localizacion" value="<?= htmlspecialchars($materialToEdit['localizacion']); ?>" required>
+                    <div class="col-md-6">
+                        <label for="lpn" class="form-label">LPN:</label>
+                        <input type="text" class="form-control" name="lpn" value="<?= htmlspecialchars($materialToEdit['lpn']); ?>" required>
+                    </div>
 
-                <label>Descripción:</label>
-                <input type="text" name="descripcion" value="<?= htmlspecialchars($materialToEdit['descripcion']); ?>" required>
+                    <div class="col-md-6">
+                        <label for="localizacion" class="form-label">Localización:</label>
+                        <input type="text" class="form-control" name="localizacion" value="<?= htmlspecialchars($materialToEdit['localizacion']); ?>" required>
+                    </div>
 
-                <label>Stock Mínimo:</label>
-                <input type="number" name="stock_minimo" value="<?= htmlspecialchars($materialToEdit['stock_minimo']); ?>" required>
+                    <div class="col-md-6">
+                        <label for="descripcion" class="form-label">Descripción:</label>
+                        <input type="text" class="form-control" name="descripcion" value="<?= htmlspecialchars($materialToEdit['descripcion']); ?>" required>
+                    </div>
 
-                <label>Stock Máximo:</label>
-                <input type="number" name="stock_maximo" value="<?= htmlspecialchars($materialToEdit['stock_maximo']); ?>" required>
+                    <div class="col-md-6">
+                        <label for="stock_minimo" class="form-label">Stock Mínimo:</label>
+                        <input type="number" class="form-control" name="stock_minimo" value="<?= htmlspecialchars($materialToEdit['stock_minimo']); ?>" required>
+                    </div>
 
-                <label>Embalaje:</label>
-                <input type="text" name="embalaje" value="<?= htmlspecialchars($materialToEdit['embalaje']); ?>" required>
+                    <div class="col-md-6">
+                        <label for="stock_maximo" class="form-label">Stock Máximo:</label>
+                        <input type="number" class="form-control" name="stock_maximo" value="<?= htmlspecialchars($materialToEdit['stock_maximo']); ?>" required>
+                    </div>
 
-                <button type="submit">Actualizar Material</button>
-            </form>
+                    <div class="col-md-6">
+                        <label for="embalaje" class="form-label">Embalaje:</label>
+                        <input type="text" class="form-control" name="embalaje" value="<?= htmlspecialchars($materialToEdit['embalaje']); ?>" required>
+                    </div>
+
+                    <div class="modal-footer border-0">
+                        <button type="submit" class="btn btn-dark">Actualizar</button>
+                        <button type="button" class="btn btn-dark" onclick="cerrarModal()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+</div>
+
+<script>
+    function cerrarModal() {
+        document.getElementById('editModal').style.display = 'none';
+        // También puedes redirigir a la misma página para limpiar la URL:
+        window.location.href = "maestraMaterialesController.php";
+    }
+</script>
 <?php endif; ?>
+
+
 
 <script>
     function filterReports() {
@@ -404,6 +522,22 @@ if (isset($_GET['edit_id'])) {
         });
     }
     </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+<script>
+    let table = $("#tablamaestra_de_materiales").DataTable({
+            "oLanguage": {
+                "sUrl": "assets/js/datatables_es.json"
+            },
+            responsive: true,
+            pagingType: "full_numbers"
+        });
+</script>
 
 </body>
 </html>

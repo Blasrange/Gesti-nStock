@@ -184,72 +184,75 @@ if (isset($_SESSION['error_message'])) {
     unset($_SESSION['error_message']); // Limpiar el mensaje de error después de mostrarlo
 }
 ?>
-<div class="table-responsive">
-<table id="tablaInventarios" class="table table-striped table-hover dataTable display" style="heigth:400px">
-    <thead>
-        <tr>
-            <th>Código</th>
-            <th>LPN</th>
-            <th>Localización</th>
-            <th>Área Picking</th>
-            <th>SKU</th>
-            <th>SKU2</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Tipo Material</th>
-            <th>Categoría Material</th>
-            <th>Unidades</th>
-            <th>Cajas</th>
-            <th>Reserva</th>
-            <th>Disponible</th>
-            <th>UDM</th>
-            <th>Embalaje</th>
-            <th>Fecha Entrada</th>
-            <th>Estado</th>
-            <th>Lote</th>
-            <th>Fecha Fabricación</th>
-            <th>Fecha Vencimiento</th>
-            <th>FPC</th>
-            <th>Peso</th>
-            <th>Serial</th>
-            <th>Cliente ID</th>
-            <!--th>Acciones</th-->
-        </tr>
-    </thead>
-    
-    <tbody>
-        <?php foreach ($inventarios as $inventario): ?>
-            <tr>
-                <td><?php echo htmlspecialchars($inventario['codigo']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['lpn']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['localizacion']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['area_picking']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['sku']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['sku2']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['descripcion']); ?></td>
-                <td><?php echo htmlspecialchars(number_format($inventario['precio'], 2)); ?></td>
-                <td><?php echo htmlspecialchars($inventario['tipo_material']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['categoria_material']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['unidades']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['cajas']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['reserva']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['disponible']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['udm']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['embalaje']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['fecha_entrada']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['estado']); ?></td>
-                <td><?php echo htmlspecialchars($inventario['lote']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['fecha_fabricacion']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['fecha_vencimiento']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['fpc']); ?></td>
-                <td><?php echo htmlspecialchars(number_format($inventario['peso']?? '')); ?></td>
-                <td><?php echo htmlspecialchars($inventario['serial']?? ''); ?></td>
-                <td><?php echo htmlspecialchars($inventario['cliente_id']
-            ); ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+
+<div style="margin-left: 20px; margin-right: 20px">
+    <div class="table-responsive">
+        <table id="tablaInventarios" class="table table-striped table-hover dataTable display">
+            <thead>
+                <tr>
+                    <th style="text-align: center">Código</th>
+                    <th style="text-align: center">LPN</th>
+                    <th style="text-align: center">Localización</th>
+                    <th style="text-align: center">Área Picking</th>
+                    <th style="text-align: center">SKU</th>
+                    <th style="text-align: center">SKU2</th>
+                    <th style="text-align: center">Descripción</th>
+                    <th style="text-align: center">Precio</th>
+                    <th style="text-align: center">Tipo Material</th>
+                    <th style="text-align: center">Categoría Material</th>
+                    <th style="text-align: center">Unidades</th>
+                    <th style="text-align: center">Cajas</th>
+                    <th style="text-align: center">Reserva</th>
+                    <th style="text-align: center">Disponible</th>
+                    <th style="text-align: center">UDM</th>
+                    <th style="text-align: center">Embalaje</th>
+                    <th style="text-align: center">Fecha Entrada</th>
+                    <th style="text-align: center">Estado</th>
+                    <th style="text-align: center">Lote</th>
+                    <th style="text-align: center">Fecha Fabricación</th>
+                    <th style="text-align: center">Fecha Vencimiento</th>
+                    <th style="text-align: center">FPC</th>
+                    <th style="text-align: center">Peso</th>
+                    <th style="text-align: center">Serial</th>
+                    <th style="text-align: center">Cliente ID</th>
+                    <!--th>Acciones</th-->
+                </tr>
+            </thead>
+            
+            <tbody>
+                <?php foreach ($inventarios as $inventario): ?>
+                    <tr>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['codigo']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['lpn']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['localizacion']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['area_picking']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['sku']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['sku2']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['descripcion']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars(number_format($inventario['precio'], 2)); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['tipo_material']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['categoria_material']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['unidades']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['cajas']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['reserva']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['disponible']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['udm']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['embalaje']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fecha_entrada']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['estado']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['lote']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fecha_fabricacion']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fecha_vencimiento']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fpc']); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars(number_format($inventario['peso']?? '')); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['serial']?? ''); ?></td>
+                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['cliente_id']
+                    ); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>

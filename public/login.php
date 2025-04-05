@@ -68,7 +68,7 @@
         .login-container button {
             width: 100%;
             padding: 10px;
-            background-color: #007bff;
+            background-color: #212529;
             border: none;
             color: white;
             font-size: 16px;
@@ -78,14 +78,14 @@
         }
 
         .login-container button:hover {
-            background-color: #0056b3;
+            background-color:  #424649;
         }
 
         .forgot-password {
             display: block;
             text-align: center;
             margin-top: 10px;
-            color: #007bff;
+            color: #424649;
             text-decoration: none;
             font-size: 14px;
         }

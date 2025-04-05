@@ -138,7 +138,7 @@ button.danger:hover {
 
 .btn-editar {
     display: inline-block;
-    background-color: #6081bd; /* Mismo color que el botón eliminar */
+    background-color: #242527; /* Mismo color que el botón eliminar */
     color: white;
     padding: 7px 22px;
     border: none;
@@ -298,13 +298,6 @@ button:hover {
     background-color: #f1f1f1;
 }
 
-/* Barra de búsqueda */
-.search-container {
-    flex-grow: 1;
-    display: flex;
-    justify-content: flex-end;
-}
-
 .search-input {
     padding: 8px;
     font-size: 16px;
@@ -313,3 +306,41 @@ button:hover {
     width: 300px;
 }
 
+.btn-editar, .btn-eliminar {
+    background-color: #212529; /* Color de fondo similar al de la imagen */
+    color: white; /* Color del texto */
+    padding: 8px 16px; /* Espaciado */
+    border: none; /* Quitar borde */
+    border-radius: 6px; /* Bordes redondeados */
+    cursor: pointer;
+    text-decoration: none; /* Para enlaces */
+    display: inline-block;
+    font-size: 16px;
+}
+
+.btn-editar:hover, .btn-eliminar:hover {
+    background-color: #343a40; /* Un color más claro para el efecto hover */
+}
+
+.modal-content {
+    border-radius: 1rem;
+}
+
+.btn-success {
+    background-color: #D4F8E8;
+    color: #343a40;
+    border: none;
+}
+
+.btn-outline-secondary {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.form-control, .form-select {
+    border-radius: 0.5rem;
+}
+
+label {
+    font-weight: 500;
+}

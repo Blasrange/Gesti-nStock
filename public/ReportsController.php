@@ -16,7 +16,7 @@ use App\Database;
 use App\Reports;
 use App\Historial;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xls; // Usar Writer para formato .xls
 
 if (!isset($_SESSION['user_id'], $_SESSION['cliente_id'], $_SESSION['ciudad_id'])) {
     header('Location: login.php');
@@ -72,60 +72,55 @@ if (isset($_POST['descargar_excel'])) {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Comprobamos si el cliente_id es 1 para elegir qué columnas mostrar
-        if ($cliente_id == 1) {
-            // Encabezados específicos para cliente_id 1
-            $sheet->setCellValue('A1', 'LTLD_LPN_SRC');
-            $sheet->setCellValue('B1', 'LTLD_SKU');
-            $sheet->setCellValue('C1', 'LTLD_LOT');
-            $sheet->setCellValue('D1', 'LTLD_QTY');
-            $sheet->setCellValue('E1', 'LTLD_LPN_DST');
-            $sheet->setCellValue('F1', 'LTLD_LOCATION_DST');
+        // Establecer los títulos de las columnas
+        $sheet->setCellValue('A1', 'LTLD_LPN_SRC');
+        $sheet->setCellValue('B1', 'LTLD_SKU');
+        $sheet->setCellValue('C1', 'LTLD_LOT');
+        $sheet->setCellValue('D1', 'LTLD_QTY');
+        $sheet->setCellValue('E1', 'LTLD_LPN_DST');
+        $sheet->setCellValue('F1', 'LTLD_LOCATION_DST');
 
-            // Llenar datos específicos para cliente_id 1
-            $row = 2;
-            foreach ($reportes as $reporte) {
-                $sheet->setCellValue('A' . $row, $reporte['lpn_inventario'] ?? '');
-                $sheet->setCellValue('B' . $row, $reporte['sku']);
-                $sheet->setCellValue('C' . $row, $reporte['lote'] ?? '');
-                $sheet->setCellValue('D' . $row, $reporte['unidades_reabastecer'] ?? 0);
-                $sheet->setCellValue('E' . $row, $reporte['lpn_max_min'] ?? '');
-                $sheet->setCellValue('F' . $row, $reporte['localizacion_destino'] ?? '');
-                $row++;
-            }
-        } else {
-            // Plantilla general
-            $sheet->setCellValue('A1', 'SKU');
-            $sheet->setCellValue('B1', 'Descripción');
-            $sheet->setCellValue('C1', 'LPN Inventario');
-            $sheet->setCellValue('D1', 'Localización Origen');
-            $sheet->setCellValue('E1', 'LPN Max Min');
-            $sheet->setCellValue('F1', 'Localización Destino');
-            $sheet->setCellValue('G1', 'Estado');
-            $sheet->setCellValue('H1', 'Unidades a Reabastecer');
-            $sheet->setCellValue('I1', 'Cajas a Reabastecer');
-
-            $row = 2;
-            foreach ($reportes as $reporte) {
-                $sheet->setCellValue('A' . $row, $reporte['sku']);
-                $sheet->setCellValue('B' . $row, $reporte['descripcion'] ?? '');
-                $sheet->setCellValue('C' . $row, $reporte['lpn_inventario'] ?? '');
-                $sheet->setCellValue('D' . $row, $reporte['localizacion_origen'] ?? '');
-                $sheet->setCellValue('E' . $row, $reporte['lpn_max_min'] ?? '');
-                $sheet->setCellValue('F' . $row, $reporte['localizacion_destino'] ?? '');
-                $sheet->setCellValue('G' . $row, $reporte['estado'] ?? '');
-                $sheet->setCellValue('H' . $row, $reporte['unidades_reabastecer'] ?? 0);
-                $sheet->setCellValue('I' . $row, $reporte['cajas_reabastecer'] ?? 0);
-                $row++;
-            }
+        // Llenar datos
+        $row = 2;
+        foreach ($reportes as $reporte) {
+            $sheet->setCellValue('A' . $row, $reporte['lpn_inventario'] ?? '');
+            $sheet->setCellValue('B' . $row, $reporte['sku']);
+            $sheet->setCellValue('C' . $row, $reporte['lote'] ?? '');
+            $sheet->setCellValue('D' . $row, $reporte['unidades_reabastecer'] ?? 0);
+            $sheet->setCellValue('E' . $row, $reporte['lpn_max_min'] ?? '');
+            $sheet->setCellValue('F' . $row, $reporte['localizacion_destino'] ?? '');
+            $row++;
         }
 
-        $fileName = 'reportes_cliente_' . $cliente_id . '.xlsx';
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        // Mejorar la presentación con algunos estilos
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+            'font' => [
+                'bold' => true,
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ];
+
+        // Aplicar estilos a las celdas
+        $sheet->getStyle('A1:F1')->applyFromArray($styleArray); // Cabecera
+        $sheet->getStyle('A1:F' . $row)->applyFromArray($styleArray); // Celdas de datos
+
+        // Establecer el nombre del archivo y hacer la descarga
+        $fileName = 'reportes_cliente_' . $cliente_id . '.xls'; // Formato .xls para Excel 97-2003
+        header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         header('Cache-Control: max-age=0');
-        
-        $writer = new Xlsx($spreadsheet);
+
+        // Escribir el archivo en formato Excel 97-2003
+        $writer = new Xls($spreadsheet);
         $writer->save('php://output');
         exit;
     }
@@ -136,6 +131,7 @@ $reportes = $_SESSION['reportes'] ?? [];
 if (empty($reportes)) {
     unset($_SESSION['reportes']);
 }
+$titulo = "Reportes";
 include '../templates/header.php';
 ?>
 
@@ -143,80 +139,91 @@ include '../templates/header.php';
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reportes</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <style>
-        /* Estilos personalizados */
-        .btn-actualizar, .btn-descargar {
-            background-color: rgb(96, 129, 189);
+        .btn-back {
+            display: inline-block;
+            background-color: #1e3765            ;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 5px;
+            text-decoration: none;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            margin-right: 10px; /* Espacio entre botones */
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
         }
-        .btn-actualizar:hover {
+
+        .btn-back:hover {
             background-color: #1e3765;
+            transform: scale(1.05);
         }
-        .btn-descargar {
-            background-color: rgb(96, 129, 189);
-        }
-        .btn-descargar:hover {
-            background-color: #1e3765;
-        }
+
         .form-upload {
-            margin: 0;
-            border: 1px solid #ccc;
-            padding: 1px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            display: flex; /* Para alinear los botones uno al lado del otro */
-            align-items: center; /* Centra los botones verticalmente */
+            margin: 0px 0; /* Espaciado */
+            border: 1px solid #ccc; /* Borde */
+            padding: 1px; /* Espaciado interno */
+            border-radius: 5px; /* Bordes redondeados */
+            background-color: #f9f9f9; /* Fondo */
         }
+
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        /* Estilo para alinear el título y el formulario */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            background-color: white;
+            background-color: white; /* Fondo blanco */
         }
+
         .header h1 {
             margin: 0;
         }
+
+        /*.error-message {
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid red;
+            background-color: #ffe6e6; /* Fondo claro para destacar el error */
+        
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 98%;
             background-color: white;
-            z-index: 1000;
+            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
             padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
         }
-        body {
-            margin-top: 100px;
-        }
+
         .total {
             position: fixed;
             bottom: 0;
             width: 100%;
             background-color: #f8f9fa;
             text-align: center;
-            padding: 1px;
+            padding: 3px;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
         }
+
         .search-container {
-            display: flex;
-            gap: 8px; /* Ajusta el espacio entre el campo de búsqueda y el botón */
-            align-items: center;
-        }
-        table td:nth-child(8) {
-            text-align: center;
+            text-align: right;
         }
         .search-input {
             padding: 8px;
@@ -224,8 +231,73 @@ include '../templates/header.php';
             border-radius: 5px;
             border: 1px solid #ccc;
             width: 200px;
+            margin-left: auto;
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: white;
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 98%;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }       
+
+       
     </style>
+</head>
+<body>
+        <?php if (isset($_SESSION['error_message'])): ?>
+            <p class="error"><?php echo $_SESSION['error_message']; ?></p>
+        <?php endif; ?>
+        
+    <div style="margin-left: 20px; margin-right: 20px">                
+        <div class="table-responsive"> 
+            <div class="search-container">
+                <form method="POST" style="display: inline;">
+                <button type="submit" name="actualizar" class="btn btn-dark btn-small">Actualizar</button>
+                <input type="submit" name="descargar_excel" class="btn btn-dark btn-small" value="Descargar Excel">
+                </form>
+            </div>           
+            <table id="tablareportes" class="table table-striped table-hover dataTable display" style="heigth:400px">                    
+            <thead>
+                <tr>
+                    <th style="text-align: center">SKU</th>
+                    <th style="text-align: center">Descripción</th>
+                    <th style="text-align: center">LPN Inventario</th>
+                    <th style="text-align: center">Localización Origen</th>
+                    <th style="text-align: center">LPN Max Min</th>
+                    <th style="text-align: center">Localización Destino</th>
+                    <th style="text-align: center">Estado</th>
+                    <th style="text-align: center">Unidades a Reabastecer</th>
+                    <th style="text-align: center">Cajas a Reabastecer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($reportes)): ?>
+                    <?php foreach ($reportes as $reporte): ?>
+                        <tr>
+                            <td style="text-align: center"><?php echo $reporte['sku']; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['descripcion'] ?? ''; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['lpn_inventario'] ?? ''; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['localizacion_origen'] ?? ''; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['lpn_max_min'] ?? ''; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['localizacion_destino'] ?? ''; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['estado'] ?? ''; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['unidades_reabastecer'] ?? 0; ?></td>
+                            <td style="text-align: center"><?php echo $reporte['cajas_reabastecer'] ?? 0; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
     <script>
         function filterReports() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
@@ -236,69 +308,19 @@ include '../templates/header.php';
             });
         }
     </script>
-</head>
-<body>
-    <div class="header">
-        <a href="dashboard.php" style="text-decoration: none; color: black;">
-            <h1>Reportes</h1>
-        </a>
-        <div class="search-container">
-            <input type="text" id="search-input" class="search-input" placeholder="Buscar..." oninput="filterReports()">
-                <form method="POST" style="display: inline;">
-                <button type="submit" name="actualizar" class="btn-actualizar">Actualizar</button>
-                <input type="submit" name="descargar_excel" class="btn-descargar" value="Descargar Excel">
-            </form>
-            
-        </div>
-    </div>
-
-    <div class="container">
-        <?php if (isset($_SESSION['error_message'])): ?>
-            <p class="error"><?php echo $_SESSION['error_message']; ?></p>
-        <?php endif; ?>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>SKU</th>
-                    <th>Descripción</th>
-                    <th>LPN Inventario</th>
-                    <th>Localización Origen</th>
-                    <th>LPN Max Min</th>
-                    <th>Localización Destino</th>
-                    <th>Estado</th>
-                    <th>Unidades a Reabastecer</th>
-                    <th>Cajas a Reabastecer</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($reportes)): ?>
-                    <?php foreach ($reportes as $reporte): ?>
-                        <tr>
-                            <td><?php echo $reporte['sku']; ?></td>
-                            <td><?php echo $reporte['descripcion'] ?? ''; ?></td>
-                            <td><?php echo $reporte['lpn_inventario'] ?? ''; ?></td>
-                            <td><?php echo $reporte['localizacion_origen'] ?? ''; ?></td>
-                            <td><?php echo $reporte['lpn_max_min'] ?? ''; ?></td>
-                            <td><?php echo $reporte['localizacion_destino'] ?? ''; ?></td>
-                            <td><?php echo $reporte['estado'] ?? ''; ?></td>
-                            <td><?php echo $reporte['unidades_reabastecer'] ?? 0; ?></td>
-                            <td><?php echo $reporte['cajas_reabastecer'] ?? 0; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="9">No hay reportes disponibles.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="total">
-        <p>Total de registros: <?php echo count($reportes); ?></p>
-    </div>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script>
+        let table = $("#tablareportes").DataTable({
+                "oLanguage": {
+                    "sUrl": "assets/js/datatables_es.json"
+                },
+                responsive: true,
+                pagingType: "full_numbers",
+            });
+    </script>
     
 </body>
 </html>

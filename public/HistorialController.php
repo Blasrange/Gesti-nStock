@@ -63,20 +63,25 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
     $turno = 3;
 }
 
+$titulo = "Historial";
+include '../templates/header.php';
+
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <style>
         .btn-back {
             display: inline-block;
-            background-color: rgb(96, 129, 189);
+            background-color: #1e3765            ;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -90,24 +95,8 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
         }
 
         .btn-back:hover {
-            background-color: rgb(96, 129, 189);
+            background-color: #1e3765;
             transform: scale(1.05);
-        }
-
-        .btn-actualizar {
-            background-color: rgb(96, 129, 189);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        .btn-actualizar:hover {
-            background-color: rgb(96, 129, 189);
         }
 
         .form-upload {
@@ -136,6 +125,14 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
             margin: 0;
         }
 
+        /*.error-message {
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid red;
+            background-color: #ffe6e6; /* Fondo claro para destacar el error */
+        
         .header {
             position: fixed;
             top: 0;
@@ -147,65 +144,95 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
         }
 
-        /* Añadir margen al contenido para que no quede debajo del header fijo */
-        body {
-            margin-top: 100px;
-        }
-        
         .total {
             position: fixed;
             bottom: 0;
             width: 100%;
             background-color: #f8f9fa;
             text-align: center;
-            padding: 10px;
+            padding: 3px;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
             z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
         }
-        
+
+        .search-container {
+            text-align: right;
+        }
+        .search-input {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+            margin-left: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: white;
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 98%;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }       
+
+       
     </style>
 </head>
 <body>
-<div class="header">
-    <a href="dashboard.php" style="text-decoration: none; color: black;">
-        <h1>Historial</h1>
-    </a>
-    <form method="POST" style="display: inline;">
-        <button type="submit" name="actualizar" class="btn-refresh">Actualizar</button>
-    </form>
-</div>
-
 <?php if (isset($_SESSION['error_message'])): ?>
     <div class="error-message">
         <?php echo $_SESSION['error_message']; ?>
     </div>
 <?php endif; ?>
 
-<table>
-    <thead>
-        <tr>
-            <th>Fecha/Hora</th>
-            <th>SKU</th>
-            <th>Unidades</th>
-            <th>Cajas</th>
-            <th>Turno</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($historial as $entry): ?>
-        <tr>
-            <td><?php echo htmlspecialchars($entry['fecha_hora']); ?></td>
-            <td><?php echo htmlspecialchars($entry['sku']); ?></td>
-            <td><?php echo htmlspecialchars($entry['unidades']); ?></td>
-            <td><?php echo htmlspecialchars($entry['cajas']); ?></td>
-            <td><?php echo htmlspecialchars($entry['turno']); ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-
-<div class="total">
-    Total de Registros: <?php echo $totalSku; ?>
+<div style="margin-left: 20px; margin-right: 20px">            
+                <div class="table-responsive"> 
+                    <div class="search-container">
+                        <form method="POST" style="display: inline;">
+                        <button type="submit" name="actualizar" class="btn btn-dark btn-small">Actualizar</button>
+                    </form>
+                </div>           
+                <table id="tablahistorial" class="table table-striped table-hover dataTable display" style="heigth:400px">
+                <thead>
+                <tr>
+                    <th style="text-align: center">Fecha/Hora</th>
+                    <th style="text-align: center">SKU</th>
+                    <th style="text-align: center">Unidades</th>
+                    <th style="text-align: center">Cajas</th>
+                    <th style="text-align: center">Turno</th>
+                </tr>
+            </thead>
+        <tbody>
+            <?php foreach ($historial as $entry): ?>
+            <tr>
+                <td style="text-align: center"><?php echo htmlspecialchars($entry['fecha_hora']); ?></td>
+                <td style="text-align: center"><?php echo htmlspecialchars($entry['sku']); ?></td>
+                <td style="text-align: center"><?php echo htmlspecialchars($entry['unidades']); ?></td>
+                <td style="text-align: center"><?php echo htmlspecialchars($entry['cajas']); ?></td>
+                <td style="text-align: center"><?php echo htmlspecialchars($entry['turno']); ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script>
+        let table = $("#tablahistorial").DataTable({
+                "oLanguage": {
+                    "sUrl": "assets/js/datatables_es.json"
+                },
+                responsive: true,
+                pagingType: "full_numbers",
+            });
+    </script>
 </body>
 </html>

@@ -47,21 +47,26 @@ if (isset($_POST['actualizar'])) {
     }
 }
 
+$titulo = "Reabastecimientos";
 // Cargar los reabastecimientos desde la sesión si existen
 $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
+include '../templates/header.php'; 
 
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reabastecimientos</title>
-    <link rel="stylesheet" href="assets/css/estilos.css"> <!-- Agrega tu CSS aquí -->
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <style>
         .btn-back {
             display: inline-block;
-            background-color: #1e3765;
+            background-color: #1e3765            ;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -79,22 +84,6 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
             transform: scale(1.05);
         }
 
-        .btn-actualizar {
-            background-color:rgb(96, 129, 189);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        .btn-actualizar:hover {
-            background-color: #1e3765;
-        }
-
         .form-upload {
             margin: 0px 0; /* Espaciado */
             border: 1px solid #ccc; /* Borde */
@@ -108,7 +97,7 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
             margin-top: 20px;
         }
 
-        /* Estilo para alinear el título, el campo de búsqueda y el botón de actualizar */
+        /* Estilo para alinear el título y el formulario */
         .header {
             display: flex;
             justify-content: space-between;
@@ -121,6 +110,14 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
             margin: 0;
         }
 
+        /*.error-message {
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid red;
+            background-color: #ffe6e6; /* Fondo claro para destacar el error */
+        
         .header {
             position: fixed;
             top: 0;
@@ -132,11 +129,6 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
         }
 
-        /* Añadir margen al contenido para que no quede debajo del header fijo */
-        body {
-            margin-top: 100px;
-        }
-        
         .total {
             position: fixed;
             bottom: 0;
@@ -147,83 +139,88 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
             z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
         }
-        .search-container {
-            display: flex;
-            gap: 8px; /* Ajusta el espacio entre el campo de búsqueda y el botón */
-            align-items: center;
-        }
 
+        .search-container {
+            text-align: right;
+        }
         .search-input {
             padding: 8px;
             font-size: 16px;
             border-radius: 5px;
             border: 1px solid #ccc;
             width: 200px;
+            margin-left: auto;
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: white;
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 98%;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }       
+
+       
     </style>
 </head>
 <body>
-    <div class="header">
-        <a href="dashboard.php" style="text-decoration: none; color: black;">
-            <h1>Reabastecimientos</h1>
-        </a>
-        <div class="search-container">
-            <input type="text" id="search-input" class="search-input" placeholder="Buscar..." oninput="filterReports()">
-            <form method="POST" style="display: inline;">
-                <button type="submit" name="actualizar" class="btn-actualizar">Actualizar</button>
-            </form>
-        </div>
-    </div>
-
+    
     <?php if (isset($_SESSION['error_message'])): ?>
         <div class="error-message">
             <?php echo $_SESSION['error_message']; ?>
         </div>
     <?php endif; ?>
 
-    <table border="0">
-        <thead>
-            <tr>
-                <th>SKU</th>
-                <th>Descripción</th>
-                <th>LPN Inventario</th>
-                <th>Localización Origen</th>
-                <th>Unidades a Reabastecer</th>
-                <th>Embalaje</th>
-                <th>Lote</th>
-                <th>Fecha Vencimiento</th>
-                <th>LPN Max Min</th>
-                <th>Localización Destino</th>
-                <th>Estado</th>                
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($reabastecimientos)): ?>
-                <?php foreach ($reabastecimientos as $reabastecimiento): ?>
+    <div style="margin-left: 20px; margin-right: 20px">        
+        <div class="table-responsive">
+        <div class="search-container">
+            <form method="POST" style="display: inline;">
+                <button type="submit" name="actualizar" class="btn btn-dark btn-small">Actualizar</button>
+            </form>
+        </div>
+            <table id="tablareabastecimientos" class="table table-striped table-hover dataTable display">
+                <thead>
                     <tr>
-                        <td><?php echo htmlspecialchars($reabastecimiento['sku']); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['descripcion'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['lpn_inventario'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['localizacion_origen'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['unidades_reabastecer']); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['embalaje'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['lote']); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['fecha_vencimiento'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['lpn_max_min'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['localizacion_destino'] ?? ''); ?></td>
-                        <td><?php echo htmlspecialchars($reabastecimiento['estado']); ?></td>                     
+                        <th style="text-align: center">SKU</th>
+                        <th style="text-align: center">Descripción</th>
+                        <th style="text-align: center">LPN Inventario</th>
+                        <th style="text-align: center">Localización Origen</th>
+                        <th style="text-align: center">Unidades a Reabastecer</th>
+                        <th style="text-align: center">Embalaje</th>
+                        <th style="text-align: center">Lote</th>
+                        <th style="text-align: center">Fecha Vencimiento</th>
+                        <th style="text-align: center">LPN Max Min</th>
+                        <th style="text-align: center">Localización Destino</th>
+                        <th style="text-align: center">Estado</th>                
                     </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="10">No se encontraron reabastecimientos</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-    <div class="total">
-        <p>Total de registros: <?php echo count($reabastecimientos); ?></p>
+                </thead>
+                <tbody>
+                    <?php if (!empty($reabastecimientos)): ?>
+                        <?php foreach ($reabastecimientos as $reabastecimiento): ?>
+                            <tr>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['sku']); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['descripcion'] ?? ''); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['lpn_inventario'] ?? ''); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['localizacion_origen'] ?? ''); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['unidades_reabastecer']); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['embalaje'] ?? ''); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['lote']); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['fecha_vencimiento'] ?? ''); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['lpn_max_min'] ?? ''); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['localizacion_destino'] ?? ''); ?></td>
+                                <td style="text-align: center"><?php echo htmlspecialchars($reabastecimiento['estado']); ?></td>                     
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -236,6 +233,18 @@ $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
             row.style.display = rowText.includes(searchInput) ? '' : 'none';
         });
     }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    <script>
+        let table = $("#tablareabastecimientos").DataTable({
+                "oLanguage": {
+                    "sUrl": "assets/js/datatables_es.json"
+                },
+                responsive: true,
+                pagingType: "full_numbers",
+            });
     </script>
 </body>
 </html>

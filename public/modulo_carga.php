@@ -7,128 +7,181 @@ require_once '../vendor/autoload.php';
 use App\Database;
 
 $database = new Database();
+
+$titulo = "Carga de Archivos";
+include '../templates/header.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Módulo de Carga</title>
-    <link rel="stylesheet" href="../css/styles.css"> 
+    <title>Carga de Archivos</title>
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        .btn-back {
+            display: inline-block;
+            background-color: #1e3765            ;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.2s;
         }
 
-        h1 {
-            text-align: center;
+        .btn-back:hover {
+            background-color: #1e3765;
+            transform: scale(1.05);
         }
 
         .form-upload {
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            text-align: center;
+            margin: 0px 0; /* Espaciado */
+            border: 1px solid #ccc; /* Borde */
+            padding: 1px; /* Espaciado interno */
+            border-radius: 5px; /* Bordes redondeados */
+            background-color: #f9f9f9; /* Fondo */
         }
 
-        .form-upload form {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
         }
+
+        /* Estilo para alinear el título y el formulario */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: white; /* Fondo blanco */
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        /*.error-message {
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid red;
+            background-color: #ffe6e6; /* Fondo claro para destacar el error */
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 98%;
+            background-color: white;
+            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
+        }
+
+        .total {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 3px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+        }
+
+        .search-container {
+            text-align: right;
+        }
+        .search-input {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+            margin-left: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: white;
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 98%;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }       
 
         .custom-file-upload {
-            display: inline-block;
-            padding: 10px 15px;
-            cursor: pointer;
-            background-color: #1e3765;
-            color: white;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }        
-        .custom-file-upload:hover {
-            background-color: #1e3765; 
-        }
+        background-color: #0a002b; /* Color de fondo igual al de "Seleccionar archivo" */
+        color: white; /* Color del texto */
+        padding: 10px 15px;
+        border-radius: 5px;
+        display: inline-block;
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-        .file-box {
-            display: inline-block;
-            padding: 10px;
-            font-weight: bold;
-            background-color: #f8f9fa;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            margin: 0 10px;
-        }
+    .upload-button {
+        background-color: #0a002b; /* Igualar al botón de "Seleccionar archivo" */
+        color: white; /* Color de texto en blanco */
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-        .upload-button {
-            padding: 12px 15px;
-            background-color: #1e3765;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
+    .upload-button:hover {
+        background-color: #05001a; /* Color más oscuro al pasar el cursor */
+    }
 
-        .upload-button:hover {
-            background-color: #1e3765;
-        }
-
-        .error {
-            color: red;
-            text-align: center;
-        }
-
-        .success {
-            color: green;
-            text-align: center;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
+    h2 {
+        color: black !important; /* Forzar el color negro en los títulos */
+    }
     </style>
 </head>
 <body>
     
 <div class="header">
-    <a href="dashboard.php" style="text-decoration: none; color: black;">
-        <h1>Carga de Archivos</h1>
-    </a>
+      <!-- Formulario para cargar inventario -->
+<div class="form-upload">
+    <h2 style="text-align: center">Cargar Inventario</h2>
+    <form action="cargar_inventario.php" method="post" enctype="multipart/form-data">
+        <label for="file-upload-inventario" class="btn btn-dark">
+            Seleccionar archivo
+        </label>
+        <span id="file-selected-inventario" class="file-box">Ningún archivo seleccionado</span>
+        <input type="file" name="file" id="file-upload-inventario" accept=".xlsx, .xls" required style="display: none;">
+        <button type="submit" name="cargar_inventario" class="btn btn-dark">Cargar Inventario</button>
+    </form>
+</div>
 
-    <!-- Formulario para cargar inventario -->
-    <div class="form-upload">
-        <h2>Cargar Inventario</h2>
-        <form action="cargar_inventario.php" method="post" enctype="multipart/form-data">
-            <label for="file-upload-inventario" class="custom-file-upload">
-                Seleccionar archivo
-            </label>
-            <span id="file-selected-inventario" class="file-box">Ningún archivo seleccionado</span>
-            <input type="file" name="file" id="file-upload-inventario" accept=".xlsx, .xls" required style="display: none;">
-            <button type="submit" class="upload-button">Cargar Inventario</button>
-        </form>
-    </div>
-
-    <!-- Formulario para cargar maestra de materiales -->
-    <div class="form-upload">
-        <h2>Cargar Maestra de Materiales</h2>
-        <form action="cargar_Materiales.php" method="post" enctype="multipart/form-data">
-            <label for="file-upload-materiales" class="custom-file-upload">
-                Seleccionar archivo
-            </label>
-            <span id="file-selected-materiales" class="file-box">Ningún archivo seleccionado</span>
-            <input type="file" name="file" id="file-upload-materiales" accept=".xlsx, .xls" required style="display: none;">
-            <button type="submit" class="upload-button">Cargar Materiales</button>
-        </form>
-    </div>
+<!-- Formulario para cargar maestra de materiales -->
+<div class="form-upload">
+    <h2 style="text-align: center">Cargar Maestra de Materiales</h2>
+    <form action="cargar_Materiales.php" method="post" enctype="multipart/form-data">
+        <label for="file-upload-materiales" class="btn btn-dark">
+            Seleccionar archivo
+        </label>
+        <span id="file-selected-materiales" class="file-box">Ningún archivo seleccionado</span>
+        <input type="file" name="file" id="file-upload-materiales" accept=".xlsx, .xls" required style="display: none;">
+        <button type="submit" class="btn btn-dark">Cargar Materiales</button>
+    </form>
+</div>
 
     <!-- Mostrar mensajes de error o éxito -->
     <?php if (isset($_SESSION['error_message'])): ?>
@@ -153,5 +206,11 @@ $database = new Database();
         document.getElementById('file-selected-materiales').textContent = fileName;
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+    
+
 </body>
 </html>
