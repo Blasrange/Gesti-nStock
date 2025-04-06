@@ -70,7 +70,7 @@ ssh -T git@github.com
 # Push
 Para futuros cambios y subir los registros a github ejecutar:
 
-git add . ; git commit -m "avance tabla inventarios" ; git push
+git add . ; git commit -m "actualizacion varias carpetas" ; git push
 
 # Clonar repositorio
 Para descargar un repositorio completo basta con tomar la url ej: https://github.com/Blasrange/reabastecimiento.git y ejecutar el siguiente comando en alguna carpeta de su computadora.

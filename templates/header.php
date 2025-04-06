@@ -56,11 +56,29 @@
                         <li><a class="dropdown-item" href="ReabastecimientosController.php"><i class="fas fa-arrow-up"></i> Reabastecimientos</a></li>
                         <li><a class="dropdown-item" href="ReportsController.php"><i class="fas fa-chart-line"></i> Reportes</a></li>
                         <li><a class="dropdown-item" href="HistorialController.php"><i class="fas fa-history"></i> Historial</a></li>
-                        <li><a class="dropdown-item" href="UsuarioController.php"><i class="fas fa-user"></i> Usuario</a></li>
-                        <li><a class="dropdown-item" href="modulo_carga.php"><i class="fas fa-upload"></i> Interfaces</a></li>
+                        <!--li><a class="dropdown-item" href="UsuarioController.php"><i class="fas fa-user"></i> Usuarios</a></li!-->
+                        <!--li><a class="dropdown-item" href="ClienteController.php"><i class="fas fa-address-card"></i> Clientes</a></li!-->
+                        <!--li><a class="dropdown-item" href="modulo_carga.php"><i class="fas fa-upload"></i> Interfaces</a></li!-->                        
                     </ul>
                 </li>
             </ul>
+
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <!-- Menú de administración -->
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-tools"></i> Mantenimiento
+                    </a>
+            <ul class="dropdown-menu">                       
+                        <li><a class="dropdown-item" href="UsuarioController.php"><i class="fas fa-user"></i> Usuarios</a></li>
+                        <li><a class="dropdown-item" href="ClienteController.php"><i class="fas fa-address-card"></i> Clientes</a></li>
+                        <li><a class="dropdown-item" href="modulo_carga.php"><i class="fas fa-upload"></i> Interfaces</a></li>                        
+                    </ul>
+                </li>
+            </ul>
+
+
             <!-- Menú de usuario -->
             <div class="dropdown">
                 <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
@@ -73,7 +91,7 @@
                 </ul>
 
             </div>
-
+       
 </nav>
 <nav aria-label="breadcrumb" style="margin-top:75px">
     <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-3">

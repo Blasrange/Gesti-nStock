@@ -2,13 +2,12 @@
 // public/select_client_city.php
 session_start();
 
-require_once '../app/db.php'; // Asegúrate de que la ruta sea correcta
+require_once '../app/db.php';
 require_once '../app/Auth.php';
-require '../vendor/autoload.php'; // Autoload de Composer
+require '../vendor/autoload.php';
 use App\Database;
 use App\Auth;
 
-// Verificar si el usuario está autenticado
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
@@ -17,15 +16,14 @@ if (!isset($_SESSION['user_id'])) {
 $database = new Database();
 $auth = new Auth($database);
 
-// Obtener el ID del usuario
 $user_id = $_SESSION['user_id'];
 
-// Consultar clientes asociados al usuario
 $stmt = $database->pdo->prepare('
     SELECT c.id, c.nombre 
     FROM clientes c
     JOIN usuario_clientes uc ON c.id = uc.cliente_id
     WHERE uc.user_id = ?
+    AND c.estado = "1"
 ');
 $stmt->execute([$user_id]);
 $clientes = $stmt->fetchAll();
@@ -54,7 +52,6 @@ $clientes = $stmt->fetchAll();
             position: relative;
         }
 
-        /* Capa de oscurecimiento sobre la imagen de fondo */
         body::before {
             content: '';
             position: absolute;
@@ -159,7 +156,6 @@ $clientes = $stmt->fetchAll();
             <label for="ciudad">Ciudad:</label>
             <select id="ciudad" name="ciudad_id" required>
                 <option value="">-- Seleccione una Ciudad --</option>
-                <!-- Las ciudades se cargarán dinámicamente -->
             </select>
 
             <button type="submit">Continuar</button>

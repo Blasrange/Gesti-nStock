@@ -344,3 +344,10 @@ button:hover {
 label {
     font-weight: 500;
 }
+
+.logo img {
+    width: 150px; /* o el tamaño que desees */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* Centra la imagen horizontalmente */
+}

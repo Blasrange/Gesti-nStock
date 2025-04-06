@@ -119,7 +119,13 @@
 
             <button type="submit">Ingresar</button>
         </form>
-        <a href="#" class="forgot-password">¿Has olvidado tu contraseña?</a>
+        
+        <footer style="text-align: center; font-size: 0.9em; color: #555; margin-top: 20px;">
+            <p>© Copyright 2025|Corporación Colombiana de Logística</p>
+            <p>Todos los derechos reservados.</p>
+            <p>Versión 0.1.10</p>
+        </footer>
+
     </div>
 </body>
 </html>

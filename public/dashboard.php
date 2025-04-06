@@ -65,8 +65,9 @@ include '../templates/header.php';
     
      <!-- Logo y mensaje central -->
      <div class="logo">
-        <img src="assets/img/logo.png" alt="CCL">
-    </div>
+            <img src="assets/img/logo.png" alt="CCL">
+        </div>
+
     <h4>Sistema de Reabastecimiento CCL</h4>
     <p>v0.1.0</p>
 

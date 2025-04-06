@@ -16,7 +16,8 @@ use App\Database;
 use App\Reports;
 use App\Historial;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xls; // Usar Writer para formato .xls
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat; // Asegúrate de incluir la clase para formato de números
 
 if (!isset($_SESSION['user_id'], $_SESSION['cliente_id'], $_SESSION['ciudad_id'])) {
     header('Location: login.php');
@@ -69,10 +70,11 @@ if (isset($_POST['descargar_excel'])) {
     $reportes = $_SESSION['reportes'] ?? [];
 
     if (!empty($reportes)) {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = new Spreadsheet();   
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Establecer los títulos de las columnas
+        // Comprobamos si el cliente_id es 1 para elegir qué columnas mostrar
+        // Todos los clientes tendrán la misma estructura que cliente_id 1
         $sheet->setCellValue('A1', 'LTLD_LPN_SRC');
         $sheet->setCellValue('B1', 'LTLD_SKU');
         $sheet->setCellValue('C1', 'LTLD_LOT');
@@ -83,44 +85,41 @@ if (isset($_POST['descargar_excel'])) {
         // Llenar datos
         $row = 2;
         foreach ($reportes as $reporte) {
-            $sheet->setCellValue('A' . $row, $reporte['lpn_inventario'] ?? '');
-            $sheet->setCellValue('B' . $row, $reporte['sku']);
-            $sheet->setCellValue('C' . $row, $reporte['lote'] ?? '');
-            $sheet->setCellValue('D' . $row, $reporte['unidades_reabastecer'] ?? 0);
-            $sheet->setCellValue('E' . $row, $reporte['lpn_max_min'] ?? '');
-            $sheet->setCellValue('F' . $row, $reporte['localizacion_destino'] ?? '');
+            // Asumimos que el "Embalaje" está en el reporte, por ejemplo $reporte['embalaje']
+            $embalaje = $reporte['embalaje'] ?? 1; // Valor por defecto 1 si no se encuentra el embalaje
+            $cajasReabastecer = $reporte['cajas_reabastecer'] ?? 0;
+            $ltldQty = $cajasReabastecer * $embalaje; // Cálculo de LTLD_QTY
+
+            // Asignar valores de celdas
+            $sheet->setCellValue('A' . $row, (string)($reporte['lpn_inventario'] ?? ''));
+            $sheet->setCellValue('B' . $row, (string)($reporte['sku']));
+            $sheet->setCellValue('C' . $row, (string)($reporte['lote'] ?? ''));
+            $sheet->setCellValue('D' . $row, (string)($ltldQty)); // Establecer el valor calculado como texto
+            $sheet->setCellValue('E' . $row, (string)($reporte['lpn_max_min'] ?? ''));
+            $sheet->setCellValue('F' . $row, (string)($reporte['localizacion_destino'] ?? ''));
             $row++;
         }
 
-        // Mejorar la presentación con algunos estilos
-        $styleArray = [
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                ],
-            ],
-            'font' => [
-                'bold' => true,
-                'size' => 12,
-            ],
-            'alignment' => [
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-            ],
-        ];
+        // Formato para mejorar la presentación (por ejemplo, ajuste de columnas)
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
 
-        // Aplicar estilos a las celdas
-        $sheet->getStyle('A1:F1')->applyFromArray($styleArray); // Cabecera
-        $sheet->getStyle('A1:F' . $row)->applyFromArray($styleArray); // Celdas de datos
+        // Establecer estilo de la hoja (borde, negrita, etc.)
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true); // Fila de encabezado en negrita
+        $sheet->getStyle('A1:F1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // Centrado de texto
 
-        // Establecer el nombre del archivo y hacer la descarga
-        $fileName = 'reportes_cliente_' . $cliente_id . '.xls'; // Formato .xls para Excel 97-2003
-        header('Content-Type: application/vnd.ms-excel');
+        // Aplicar formato de texto a todas las celdas con datos
+        foreach (range('A', 'F') as $col) {
+            $sheet->getStyle($col . '2:' . $col . $row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        }
+
+        $fileName = 'reportes_cliente_' . $cliente_id . '.xls'; // Cambiar la extensión a .xls
+        header('Content-Type: application/vnd.ms-excel'); // Para Excel 97-2003
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         header('Cache-Control: max-age=0');
-
-        // Escribir el archivo en formato Excel 97-2003
-        $writer = new Xls($spreadsheet);
+        
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet); // Cambiar a Writer de Excel 97-2003
         $writer->save('php://output');
         exit;
     }
@@ -134,6 +133,7 @@ if (empty($reportes)) {
 $titulo = "Reportes";
 include '../templates/header.php';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
