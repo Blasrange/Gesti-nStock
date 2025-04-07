@@ -230,7 +230,7 @@ if ($action === 'index' || $action === 'edit') {
 
                     <div class="col-md-6">
                         <label class="form-label">Contraseña <?= $usuarioEdit ? '(dejar vacío para no cambiar)' : '' ?>:</label>
-                        <input type="password" name="password" class="form-control">
+                        <input type="password" name="password" class="form-control" <?= $usuarioEdit ? '' : 'required' ?>>
                     </div>
 
                     <div class="col-md-6">

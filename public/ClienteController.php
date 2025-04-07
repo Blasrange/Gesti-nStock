@@ -217,7 +217,7 @@ $ciudades = $ciudadModel->getAll();
                 <div class="mb-3">
                     <label for="ciudad_id" class="form-label">Ciudad</label>
                     <select name="ciudad_id" id="ciudad_id" class="form-select">
-                        <option value="">-- Seleccionar --</option>
+                        <option value="">Selecciona una ciudad</option>
                         <?php foreach ($ciudades as $ciudad): ?>
                             <option value="<?= $ciudad['id'] ?>"><?= htmlspecialchars($ciudad['nombre']) ?></option>
                         <?php endforeach; ?>

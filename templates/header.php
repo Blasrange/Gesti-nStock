@@ -64,7 +64,7 @@
             </ul>
 
             <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-            <!-- Menú de administración -->
+            <!-- Menú de mantenimiento -->
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">

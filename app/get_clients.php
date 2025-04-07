@@ -3,8 +3,10 @@
 
 require 'db.php';
 
+use App\Database;
+
 $db = new Database();
-$conn = $db->connect();
+
 
 $query = "SELECT c.id, c.nombre, c.email, ci.nombre AS ciudad FROM clientes c LEFT JOIN ciudades ci ON c.ciudad_id = ci.id";
 $stmt = $conn->prepare($query);

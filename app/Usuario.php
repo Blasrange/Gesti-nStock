@@ -68,17 +68,30 @@ class Usuario
 
     public function update($id, $data)
     {
-        // Actualizar tabla users (incluyendo estado)
-        $query = "UPDATE users SET name = :name, username = :username, password = :password, cliente_id = :cliente_id, estado = :estado WHERE id = :id";
+        // Construir la consulta dinámicamente dependiendo si hay contraseña o no
+        if (!empty($data['password'])) {
+            $query = "UPDATE users SET name = :name, username = :username, password = :password, cliente_id = :cliente_id, estado = :estado WHERE id = :id";
+            $params = [
+                ':name' => $data['nombre'],
+                ':username' => $data['username'],
+                ':password' => $data['password'],
+                ':cliente_id' => $data['cliente_id'],
+                ':estado' => $data['estado'],
+                ':id' => $id
+            ];
+        } else {
+            $query = "UPDATE users SET name = :name, username = :username, cliente_id = :cliente_id, estado = :estado WHERE id = :id";
+            $params = [
+                ':name' => $data['nombre'],
+                ':username' => $data['username'],
+                ':cliente_id' => $data['cliente_id'],
+                ':estado' => $data['estado'],
+                ':id' => $id
+            ];
+        }
+
         $stmt = $this->db->prepare($query);
-        $stmt->execute([
-            ':name' => $data['nombre'],
-            ':username' => $data['username'],
-            ':password' => $data['password'],
-            ':cliente_id' => $data['cliente_id'],
-            ':estado' => $data['estado'],
-            ':id' => $id
-        ]);
+        $stmt->execute($params);
 
         // Verificar si ya existe la relación con el cliente
         $checkQuery = "SELECT COUNT(*) FROM usuario_clientes WHERE user_id = :user_id AND cliente_id = :cliente_id";

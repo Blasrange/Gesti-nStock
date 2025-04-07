@@ -31,7 +31,7 @@ include '../templates/header.php';
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Reabastecimiento</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -51,7 +51,33 @@ include '../templates/header.php';
             width: 150px;
             text-align: center;
         }
+
+        .btn-soporte {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color:rgb(12, 12, 12);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: background-color 0.3s;
+        }
+
+        .btn-soporte:hover {
+            background-color: #084298;
+        }
+
+        .btn-soporte i {
+            margin-right: 8px;
+        }
     </style>
+
+
+
 </head>
 <body>
 
@@ -69,7 +95,16 @@ include '../templates/header.php';
         </div>
 
     <h4>Sistema de Reabastecimiento CCL</h4>
-    <p>v0.1.0</p>
+    <p>Versión 0.1.0</p>
+
+    <!-- Asegúrate de tener Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+        <!-- Enlace flotante -->
+        <a href="https://helpdesk.cclcloud.co/" target="_blank" class="btn-soporte">
+        <i class="fas fa-headset"></i> Soporte
+        </a>
+
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

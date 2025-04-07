@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Reabastecimiento</title>
+    <title>Reabastecimiento</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
     <style>
         * {
@@ -18,8 +18,10 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            background: url('assets/images/Logistica.jpg') no-repeat center center/cover;
-            position: relative;
+            background: url('assets/images/Logistica.jpg') no-repeat center center;
+            background-size: contain;
+            background-attachment: fixed;
+
         }
 
         /* Capa de oscurecimiento sobre la imagen de fondo */
@@ -34,17 +36,29 @@
             z-index: 1;
         }
 
-        .login-container {
-            position: relative;
-            z-index: 2;
-            width: 350px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            margin-right: 10%;
-        }
+       .login-container {
+    position: relative;
+    z-index: 2;
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    margin-right: 10%;
+}
 
+/* Diseño responsivo para pantallas pequeñas */
+@media screen and (max-width: 768px) {
+    body {
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .login-container {
+        margin-right: 0;
+    }
+}
         .login-container h2 {
             text-align: center;
             color: #333;
@@ -100,6 +114,8 @@
             margin-top: 10px;
         }
 
+           
+
     </style>
 </head>
 <body>
@@ -123,7 +139,7 @@
         <footer style="text-align: center; font-size: 0.9em; color: #555; margin-top: 20px;">
             <p>© Copyright 2025|Corporación Colombiana de Logística</p>
             <p>Todos los derechos reservados.</p>
-            <p>Versión 0.1.10</p>
+            <p>Versión 0.1.0</p>
         </footer>
 
     </div>

@@ -123,7 +123,7 @@ $clientes = $stmt->fetchAll();
                 xhr.onload = function () {
                     if (xhr.status === 200) {
                         var ciudades = JSON.parse(xhr.responseText);
-                        ciudadSelect.innerHTML = '<option value="">-- Seleccione una Ciudad --</option>';
+                        ciudadSelect.innerHTML = '<option value="">Seleccione una Ciudad</option>';
                         ciudades.forEach(function (ciudad) {
                             var option = document.createElement("option");
                             option.value = ciudad.id;
@@ -134,7 +134,7 @@ $clientes = $stmt->fetchAll();
                 };
                 xhr.send();
             } else {
-                ciudadSelect.innerHTML = '<option value="">-- Seleccione una Ciudad --</option>';
+                ciudadSelect.innerHTML = '<option value="">Seleccione una Ciudad</option>';
             }
         }
     </script>
@@ -145,7 +145,7 @@ $clientes = $stmt->fetchAll();
         <form action="process_client_city.php" method="POST">
             <label for="cliente">Cliente:</label>
             <select id="cliente" name="cliente_id" required onchange="loadCities()">
-                <option value="">-- Seleccione un Cliente --</option>
+                <option value="">Seleccione un Cliente</option>
                 <?php foreach ($clientes as $cliente): ?>
                     <option value="<?php echo $cliente['id']; ?>">
                         <?php echo htmlspecialchars($cliente['nombre']); ?>
@@ -155,7 +155,7 @@ $clientes = $stmt->fetchAll();
 
             <label for="ciudad">Ciudad:</label>
             <select id="ciudad" name="ciudad_id" required>
-                <option value="">-- Seleccione una Ciudad --</option>
+                <option value="">Seleccione una Ciudad</option>
             </select>
 
             <button type="submit">Continuar</button>

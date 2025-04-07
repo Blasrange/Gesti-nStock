@@ -206,6 +206,29 @@ ENGINE=InnoDB
 ;
 
 ------------------------------------------------------------------------------------
+CREATE TABLE `roles` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`nombre` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_unicode_ci',
+	PRIMARY KEY (`id`) USING BTREE
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+;
+
+------------------------------------------------------------------------------------
+CREATE TABLE `usuario_roles` (
+	`user_id` INT NOT NULL,
+	`rol_id` INT NOT NULL,
+	PRIMARY KEY (`user_id`, `rol_id`) USING BTREE,
+	INDEX `rol_id` (`rol_id`) USING BTREE,
+	CONSTRAINT `usuario_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+	CONSTRAINT `usuario_roles_ibfk_2` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+)
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB
+;
+
+------------------------------------------------------------------------------------
 -- Insertar clientes
 INSERT INTO `clientes` (`nombre`, `email`, `telefono`, `ciudad_id`, `created_at`)
 VALUES 
