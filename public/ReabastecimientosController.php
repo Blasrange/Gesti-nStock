@@ -48,6 +48,7 @@ if (isset($_POST['actualizar'])) {
 }
 
 $titulo = "Reabastecimientos";
+$seccion = "Administración";
 // Cargar los reabastecimientos desde la sesión si existen
 $reabastecimientos = $_SESSION['reabastecimientos'] ?? [];
 include '../templates/header.php'; 

@@ -131,6 +131,7 @@ if (empty($reportes)) {
     unset($_SESSION['reportes']);
 }
 $titulo = "Reportes";
+$seccion = "Administración";
 include '../templates/header.php';
 ?>
 

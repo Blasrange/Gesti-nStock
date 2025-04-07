@@ -1,5 +1,5 @@
 <?php
-// app/inventarios.php
+// app/Inventarios.php
 namespace App;
 
 use PDO;
@@ -8,6 +8,13 @@ use PDOException;
 class Inventarios {
     private $db;
     private $cliente_id;
+
+    private $campos = [
+        'codigo', 'lpn', 'localizacion', 'area_picking', 'sku', 'sku2', 'descripcion', 
+        'precio', 'tipo_material', 'categoria_material', 'unidades', 'cajas', 'reserva', 
+        'disponible', 'udm', 'embalaje', 'fecha_entrada', 'estado', 'lote', 
+        'fecha_fabricacion', 'fecha_vencimiento', 'fpc', 'peso', 'serial'
+    ];
 
     public function __construct(Database $database, $cliente_id) {
         $this->db = $database->pdo;
@@ -20,16 +27,49 @@ class Inventarios {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function addItem($data) {
-        $data[':cliente_id'] = $this->cliente_id;
-
+    public function getPaginatedItems($limit = 50, $offset = 0) {
         $stmt = $this->db->prepare('
-            INSERT INTO inventarios (codigo, lpn, localizacion, area_picking, sku, sku2, descripcion, precio, tipo_material, categoria_material, unidades, cajas, reserva, disponible, udm, embalaje, fecha_entrada, estado, lote, fecha_fabricacion, fecha_vencimiento, fpc, peso, serial, cliente_id) 
-            VALUES (:codigo, :lpn, :localizacion, :area_picking, :sku, :sku2, :descripcion, :precio, :tipo_material, :categoria_material, :unidades, :cajas, :reserva, :disponible, :udm, :embalaje, :fecha_entrada, :estado, :lote, :fecha_fabricacion, :fecha_vencimiento, :fpc, :peso, :serial, :cliente_id)
+            SELECT * FROM inventarios 
+            WHERE cliente_id = :cliente_id 
+            ORDER BY id 
+            LIMIT :limit OFFSET :offset
         ');
+        $stmt->bindValue(':cliente_id', $this->cliente_id, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function searchItems($term) {
+        $stmt = $this->db->prepare('
+            SELECT * FROM inventarios 
+            WHERE cliente_id = :cliente_id AND (sku LIKE :term OR descripcion LIKE :term)
+        ');
+        $stmt->execute([
+            ':cliente_id' => $this->cliente_id,
+            ':term' => '%' . $term . '%'
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addItem($data) {
+        if (!$this->validateItemData($data)) {
+            $this->log("Datos inválidos para inserción.");
+            return false;
+        }
+
+        $data['cliente_id'] = $this->cliente_id;
+        $camposSQL = implode(', ', $this->campos) . ', cliente_id';
+        $placeholders = ':' . implode(', :', $this->campos) . ', :cliente_id';
+
+        $stmt = $this->db->prepare("
+            INSERT INTO inventarios ($camposSQL) 
+            VALUES ($placeholders)
+        ");
 
         try {
-            return $stmt->execute($data);
+            return $stmt->execute($this->prepareBindings($data));
         } catch (PDOException $e) {
             $this->log("Error al agregar artículo: " . $e->getMessage());
             return false;
@@ -37,51 +77,24 @@ class Inventarios {
     }
 
     public function updateItem($id, $data) {
-        $data[':id'] = $id; 
-        $data[':cliente_id'] = $this->cliente_id; 
+        if (!$this->validateItemData($data)) {
+            $this->log("Datos inválidos para actualización del ID $id.");
+            return false;
+        }
 
-        $stmt = $this->db->prepare('
+        $setFields = implode(', ', array_map(fn($f) => "$f = :$f", $this->campos));
+        $stmt = $this->db->prepare("
             UPDATE inventarios 
-            SET codigo = :codigo, lpn = :lpn, localizacion = :localizacion, area_picking = :area_picking, 
-                sku = :sku, sku2 = :sku2, descripcion = :descripcion, precio = :precio, 
-                tipo_material = :tipo_material, categoria_material = :categoria_material, 
-                unidades = :unidades, cajas = :cajas, reserva = :reserva, 
-                disponible = :disponible, udm = :udm, embalaje = :embalaje, 
-                fecha_entrada = :fecha_entrada, estado = :estado, lote = :lote, 
-                fecha_fabricacion = :fecha_fabricacion, fecha_vencimiento = :fecha_vencimiento, 
-                fpc = :fpc, peso = :peso, serial = :serial
+            SET $setFields 
             WHERE id = :id AND cliente_id = :cliente_id
-        ');
+        ");
 
         try {
-            $result = $stmt->execute([
-                ':codigo' => $data['codigo'],
-                ':lpn' => $data['lpn'],
-                ':localizacion' => $data['localizacion'],
-                ':area_picking' => $data['area_picking'],
-                ':sku' => $data['sku'],
-                ':sku2' => $data['sku2'],
-                ':descripcion' => $data['descripcion'],
-                ':precio' => $data['precio'],
-                ':tipo_material' => $data['tipo_material'],
-                ':categoria_material' => $data['categoria_material'],
-                ':unidades' => $data['unidades'],
-                ':cajas' => $data['cajas'],
-                ':reserva' => $data['reserva'],
-                ':disponible' => $data['disponible'],
-                ':udm' => $data['udm'],
-                ':embalaje' => $data['embalaje'],
-                ':fecha_entrada' => $data['fecha_entrada'],
-                ':estado' => $data['estado'],
-                ':lote' => $data['lote'],
-                ':fecha_fabricacion' => $data['fecha_fabricacion'],
-                ':fecha_vencimiento' => $data['fecha_vencimiento'],
-                ':fpc' => $data['fpc'],
-                ':peso' => $data['peso'],
-                ':serial' => $data['serial'],
-                ':id' => $id,
-                ':cliente_id' => $this->cliente_id
-            ]);
+            $bindings = $this->prepareBindings($data);
+            $bindings[':id'] = $id;
+            $bindings[':cliente_id'] = $this->cliente_id;
+
+            $result = $stmt->execute($bindings);
 
             if (!$result) {
                 $this->log("Error al actualizar datos para ID {$id}: " . implode(", ", $stmt->errorInfo()));
@@ -134,13 +147,30 @@ class Inventarios {
     }
 
     public function deleteMissingItems($existingItems) {
+        if (empty($existingItems)) return;
+
         $placeholders = implode(',', array_fill(0, count($existingItems), '?'));
         $stmt = $this->db->prepare("DELETE FROM inventarios WHERE codigo NOT IN ($placeholders) AND cliente_id = ?");
         $stmt->execute(array_merge($existingItems, [$this->cliente_id]));
     }
 
+    private function validateItemData($data) {
+        return !empty($data['codigo']) && !empty($data['descripcion']);
+    }
+
+    private function prepareBindings($data) {
+        $bindings = [];
+        foreach ($this->campos as $campo) {
+            $bindings[":$campo"] = $data[$campo] ?? null;
+        }
+        $bindings[':cliente_id'] = $this->cliente_id;
+        return $bindings;
+    }
+
     private function log($message) {
-        error_log($message, 3, __DIR__ . '/../logs/report.log');
+        $logFile = __DIR__ . '/../logs/report.log';
+        $time = date('Y-m-d H:i:s');
+        error_log("[$time] $message\n", 3, $logFile);
     }
 }
 ?>

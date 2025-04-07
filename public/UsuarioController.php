@@ -31,6 +31,7 @@ if ($action === 'index' || $action === 'edit') {
     $usuarios = $usuarioModel->getAll();
     $clientes = $clienteModel->getAll();
     $titulo = "Usuarios";
+    $seccion = "Mantenimiento";
     $usuarioEdit = null;
 
     if ($action === 'edit' && isset($_GET['id'])) {

@@ -10,6 +10,7 @@ error_reporting(E_ALL);
 
 require_once '../app/db.php';
 require_once '../app/inventarios.php';
+require_once './sigware_api.php';
 
 use App\Database;
 use App\inventarios;
@@ -18,6 +19,69 @@ use App\inventarios;
 if (!isset($_SESSION['user_id'], $_SESSION['cliente_id'], $_SESSION['ciudad_id'])) {
     header('Location: login.php');
     exit;
+}
+
+//Validar si se le dio click el boton de actualizar.
+if (isset($_POST['actualizar_inventario'])){
+
+    // Extraer de base de datos los valores para consultar Sigware
+    $database = new Database();
+    $result = $database->fetchAll("SELECT nodo, deposito, propietario FROM clientes WHERE id = :id", [$_SESSION['cliente_id']]);
+
+    // Extraer primer posicion de la respuesta.
+    $parametrosSigware = $result[0];
+
+    // Consumir ORDS Sigware
+    $data = WMSOrds::getInventory($parametrosSigware['nodo'], $parametrosSigware['deposito'], $parametrosSigware['propietario']);
+
+    // Actualizar la tabla local.
+    // Elimianr todo el contenido relacionado al cliente.
+    $database->execute("DELETE FROM inventarios WHERE cliente_id = :id", [$_SESSION['cliente_id']]);
+
+    // Insertar los datos en la tabla.
+    foreach ($data['data'] as $key => $row) {
+
+        // var_dump($row);
+        // die();
+
+        $database->execute("INSERT INTO inventarios (
+            codigo, lpn, localizacion, area_picking, sku, sku2,
+            descripcion, precio, tipo_material, categoria_material, unidades,
+            cajas, reserva, disponible, udm, embalaje, fecha_entrada, estado,
+            lote, fecha_fabricacion, fecha_vencimiento, fpc, peso, serial, cliente_id
+        ) VALUES (
+            :codigo, :lpn, :localizacion, :area_picking, :sku, :sku2,
+            :descripcion, :precio, :tipo_material, :categoria_material, :unidades,
+            :cajas, :reserva, :disponible, :udm, :embalaje, :fecha_entrada, :estado,
+            :lote, :fecha_fabricacion, :fecha_vencimiento, :fpc, :peso, :serial, :cliente_id
+        )",[
+            $row['codigo'],
+            $row['lpn'],
+            $row['localizacion'],
+            $row['area picking'],
+            $row['sku'],
+            $row['sku2'],
+            $row['descripcion'],
+            round($row['precio'], 2),
+            $row['tipo de material'],
+            $row['categoría de material'],
+            $row['unidades'],
+            $row['cajas'],
+            $row['reserva'],
+            $row['disponible'],
+            $row['udm'],
+            $row['embalaje'],
+            isset($row['fecha de entrada']) ? date('Y-m-d', strtotime($row['fecha de entrada'])) : null,
+            $row['estado'],
+            $row['lote'],
+            isset($row['fecha de fabricacion']) ? date('Y-m-d', strtotime($row['fecha de fabricacion'])) : null,
+            isset($row['fecha de vencimiento']) ? date('Y-m-d', strtotime($row['fecha de vencimiento'])) : null,
+            $row['fpc'],
+            $row['peso'],
+            $row['serial'],
+            $_SESSION['cliente_id']
+        ]);
+    }
 }
 
 $database = new Database();
@@ -36,6 +100,7 @@ $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 $inventarios = $inventariosObj->getAllItems($searchTerm); // Aquí necesitas modificar tu método para aceptar el término de búsqueda
 
 $titulo = "Inventarios";
+$seccion = "Administración";
 // Contar el total de registros
 $totalRegistros = count($inventarios); // Contar los elementos en el array de inventarios
 include '../templates/header.php';  
@@ -160,16 +225,6 @@ include '../templates/header.php';
 </head>
 <body>
 
-
-<!-- <div class="header">
-    <a href="dashboard.php" style="text-decoration: none; color: black;">
-        <h5>Inventarios</h5>
-    </a>
-    <div class="search-container">
-        <input type="text" id="search-input" class="search-input" placeholder="Buscar..." oninput="filterReports()">
-    </div>
-</div> -->
-
 <script>
     document.getElementById('file-upload').addEventListener('change', function() {
         var fileName = this.files[0] ? this.files[0].name : 'Ningún archivo seleccionado';
@@ -187,7 +242,12 @@ if (isset($_SESSION['error_message'])) {
 
 <div style="margin-left: 20px; margin-right: 20px">
     <div class="table-responsive">
-        <table id="tablaInventarios" class="table table-striped table-hover dataTable display">
+    <div class="search-container">
+            <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display: inline;">
+                <button type="submit" name="actualizar_inventario" class="btn btn-dark btn-small">Actualizar de Sigware</button>
+            </form>
+        </div>
+        <table id="tablaInventarios" class="table table-striped table-hover dataTable display" style="font-size: 80%;">
             <thead>
                 <tr>
                     <th style="text-align: center">Código</th>
@@ -214,7 +274,7 @@ if (isset($_SESSION['error_message'])) {
                     <th style="text-align: center">FPC</th>
                     <th style="text-align: center">Peso</th>
                     <th style="text-align: center">Serial</th>
-                    <th style="text-align: center">Cliente ID</th>
+                    <!-- <th style="text-align: center">Cliente ID</th> -->
                     <!--th>Acciones</th-->
                 </tr>
             </thead>
@@ -222,32 +282,31 @@ if (isset($_SESSION['error_message'])) {
             <tbody>
                 <?php foreach ($inventarios as $inventario): ?>
                     <tr>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['codigo']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['lpn']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['localizacion']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['area_picking']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['sku']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['sku2']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['descripcion']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars(number_format($inventario['precio'], 2)); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['tipo_material']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['categoria_material']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['unidades']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['cajas']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['reserva']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['disponible']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['udm']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['embalaje']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fecha_entrada']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['estado']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['lote']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fecha_fabricacion']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fecha_vencimiento']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['fpc']); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars(number_format($inventario['peso']?? '')); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['serial']?? ''); ?></td>
-                        <td style="text-align: center"><?php echo htmlspecialchars($inventario['cliente_id']
-                    ); ?></td>
+                        <td style="text-align: center"><?php echo $inventario['codigo']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['lpn']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['localizacion']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['area_picking']?? ''; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['sku']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['sku2']?? ''; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['descripcion']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['precio'], 2; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['tipo_material']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['categoria_material']?? ''; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['unidades']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['cajas']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['reserva']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['disponible']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['udm']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['embalaje']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['fecha_entrada']?? ''; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['estado']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['lote']?? ''; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['fecha_fabricacion']?? ''; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['fecha_vencimiento']?? ''; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['fpc']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['peso']; ?></td>
+                        <td style="text-align: center"><?php echo $inventario['serial']?? ''; ?></td>
+                        <!-- <td style="text-align: center"><?php echo $inventario['cliente_id']; ?></td> -->
                     </tr>
                 <?php endforeach; ?>
             </tbody>

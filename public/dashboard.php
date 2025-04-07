@@ -86,16 +86,17 @@ include '../templates/header.php';
 <!-- CONTENIDO PRINCIPAL -->
 <div class="content">
     <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
-    <p>Cliente seleccionado: <strong><?php echo htmlspecialchars($cliente['nombre']); ?></strong></p>
-    <p>Ciudad seleccionada: <strong><?php echo htmlspecialchars($ciudad['nombre']); ?></strong></p>
+    <p><strong><?php echo htmlspecialchars($cliente['nombre']); ?></strong></p>
+    <p><strong><?php echo htmlspecialchars($ciudad['nombre']); ?></strong></p>
     
      <!-- Logo y mensaje central -->
-     <div class="logo">
+     <div class="logo" style="margin-bottom: 20px;">
             <img src="assets/img/logo.png" alt="CCL">
         </div>
+    
+        <h4>Sistema de Reabastecimiento CCL</h4>
+            <p>Versión 0.1.0</p>
 
-    <h4>Sistema de Reabastecimiento CCL</h4>
-    <p>Versión 0.1.0</p>
 
     <!-- Asegúrate de tener Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">

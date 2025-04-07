@@ -64,6 +64,7 @@ if ($horaActual >= '06:00' && $horaActual < '14:00') {
 }
 
 $titulo = "Historial";
+$seccion = "Administración";
 include '../templates/header.php';
 
 ?>

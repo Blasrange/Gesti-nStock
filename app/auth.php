@@ -1,5 +1,5 @@
 <?php
-// app/auth.php // Este archivo manejará la lógica de autenticación, incluyendo login y logout.
+// app/auth.php
 
 namespace App;
 
@@ -13,11 +13,11 @@ class Auth {
     }
 
     /**
-     * Inicia sesión al usuario si las credenciales son correctas.
+     * Inicia sesión al usuario si las credenciales son correctas y está activo.
      *
      * @param string $username
      * @param string $password
-     * @return bool
+     * @return bool|string Retorna true si se loguea, 'inactivo' si está desactivado, o false si es incorrecto
      */
     public function login($username, $password) {
         $stmt = $this->db->prepare('SELECT * FROM users WHERE username = ?');
@@ -25,6 +25,11 @@ class Auth {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
+            if ($user['estado'] != 1) {
+                // Usuario existe pero está inactivo
+                return 'inactivo';
+            }
+
             // Iniciar sesión
             session_regenerate_id(true); // Prevenir fijación de sesión
             $_SESSION['user_id'] = $user['id'];
@@ -32,6 +37,7 @@ class Auth {
             $_SESSION['cliente_id'] = $user['cliente_id'];
             return true;
         }
+
         return false;
     }
 
@@ -52,4 +58,3 @@ class Auth {
         return isset($_SESSION['user_id']);
     }
 }
-?>

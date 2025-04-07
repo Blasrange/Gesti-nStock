@@ -9,6 +9,7 @@ use App\Database;
 $database = new Database();
 
 $titulo = "Carga de Archivos";
+$seccion = "Mantenimiento";
 include '../templates/header.php';
 ?>
 

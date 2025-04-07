@@ -1,9 +1,10 @@
 <?php
-// public/authenticate.php // Este script procesará las credenciales ingresadas y validará al usuario.
+// public/authenticate.php
 session_start();
 require_once '../app/db.php'; // Asegúrate de que la ruta sea correcta
 require_once '../app/Auth.php';
-require '../vendor/autoload.php'; // Autoload de Composer
+require '../vendor/autoload.php';
+
 use App\Database;
 use App\Auth;
 
@@ -14,28 +15,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
 
     if (empty($username) || empty($password)) {
-        // Redirigir de vuelta al login con error
         header('Location: login.php?error=1');
         exit;
     }
 
-    // Crear instancias de Database y Auth
     $database = new Database();
     $auth = new Auth($database);
 
-    // Intentar iniciar sesión
-    if ($auth->login($username, $password)) {
-        // Redirigir a la selección de cliente y ciudad
+    // Resultado del login (puede ser true, '0', o false)
+    $loginResult = $auth->login($username, $password);
+
+    if ($loginResult === true) {
         header('Location: select_client_city.php');
         exit;
+    } elseif ($loginResult === '0') {
+        // Usuario inactivo
+        header('Location: login.php?error=0');
+        exit;
     } else {
-        // Credenciales inválidas, redirigir con error
+        // Credenciales inválidas
         header('Location: login.php?error=1');
         exit;
     }
 } else {
-    // Acceso no permitido, redirigir al login
+    // Si no es POST, redirigir al login
     header('Location: login.php');
     exit;
 }
-?>

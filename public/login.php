@@ -123,7 +123,11 @@
         <h2>Iniciar Sesión</h2>
         <?php
         if (isset($_GET['error'])) {
-            echo '<div class="error">Usuario o contraseña incorrectos.</div>';
+            if ($_GET['error'] === '0') {
+                echo '<div class="error">El usuario está inactivo. Contacte al administrador.</div>';
+            } else {
+                echo '<div class="error">Usuario o contraseña incorrectos.</div>';
+            }
         }
         ?>
         <form action="authenticate.php" method="POST">

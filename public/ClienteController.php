@@ -23,8 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'email' => $_POST['email'],
         'telefono' => $_POST['telefono'],
         'ciudad_id' => $_POST['ciudad_id'],
-        'estado' => isset($_POST['estado']) ? 1 : 0 // Checkbox activo/inactivo
+        'estado' => isset($_POST['estado']) ? 1 : 0,
+        'nodo' => $_POST['nodo'],
+        'deposito' => $_POST['deposito'],
+        'propietario' => $_POST['propietario']
     ];
+    
 
     if (!empty($_POST['id'])) {
         $clienteModel->update($_POST['id'], $data);
@@ -37,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $titulo = "Clientes";
+$seccion = "Mantenimiento";
 include '../templates/header.php';
 
 $clientes = $clienteModel->getAll();
@@ -163,6 +168,9 @@ $ciudades = $ciudadModel->getAll();
                     <th style="text-align: center">Email</th>
                     <th style="text-align: center">Teléfono</th>
                     <th style="text-align: center">Ciudad</th>
+                    <th style="text-align: center">Nodo</th>
+                    <th style="text-align: center">Depósito</th>
+                    <th style="text-align: center">Propietario</th>
                     <th style="text-align: center">Fecha Registro</th>
                     <th style="text-align: center">Estado</th>
                     <th style="text-align: center">Acciones</th>
@@ -176,6 +184,9 @@ $ciudades = $ciudadModel->getAll();
                     <td style="text-align: center"><?= htmlspecialchars($cliente['email']) ?></td>
                     <td style="text-align: center"><?= htmlspecialchars($cliente['telefono']) ?></td>
                     <td style="text-align: center"><?= htmlspecialchars($cliente['ciudad']) ?></td>
+                    <td style="text-align: center"><?= htmlspecialchars($cliente['nodo'] ?? '') ?></td>
+                    <td style="text-align: center"><?= htmlspecialchars($cliente['deposito'] ?? '') ?></td>
+                    <td style="text-align: center"><?= htmlspecialchars($cliente['propietario'] ?? '') ?></td>
                     <td style="text-align: center"><?= $cliente['created_at'] ?></td>
                     <td style="text-align: center">
                         <span class="badge <?= $cliente['estado'] ? 'text-success-light' : 'text-danger-light' ?>">
@@ -224,6 +235,19 @@ $ciudades = $ciudadModel->getAll();
                     </select>
                 </div>
                 <div class="mb-3">
+                    <label for="nodo" class="form-label">Nodo</label>
+                    <input type="text" name="nodo" id="nodo" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="deposito" class="form-label">Depósito</label>
+                    <input type="text" name="deposito" id="deposito" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="propietario" class="form-label">Propietario</label>
+                    <input type="text" name="propietario" id="propietario" class="form-control">
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Estado:</label>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" name="estado" id="estado">
@@ -260,10 +284,13 @@ $ciudades = $ciudadModel->getAll();
         document.getElementById('email').value = '';
         document.getElementById('telefono').value = '';
         document.getElementById('ciudad_id').value = '';
+        document.getElementById('nodo').value = '';
+        document.getElementById('deposito').value = '';
+        document.getElementById('propietario').value = '';
         document.getElementById('estado').checked = true;
-        document.getElementById('clienteModalLabel').textContent = 'Agregar Cliente';
         clienteModal.show();
     }
+
 
     function editarCliente(cliente) {
         document.getElementById('clienteId').value = cliente.id;
@@ -271,10 +298,13 @@ $ciudades = $ciudadModel->getAll();
         document.getElementById('email').value = cliente.email;
         document.getElementById('telefono').value = cliente.telefono;
         document.getElementById('ciudad_id').value = cliente.ciudad_id;
+        document.getElementById('nodo').value = cliente.nodo;
+        document.getElementById('deposito').value = cliente.deposito;
+        document.getElementById('propietario').value = cliente.propietario;
         document.getElementById('estado').checked = cliente.estado == 1;
-        document.getElementById('clienteModalLabel').textContent = 'Editar Cliente';
         clienteModal.show();
     }
+
 </script>
 
 </body>

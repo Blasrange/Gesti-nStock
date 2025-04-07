@@ -103,7 +103,7 @@
       </li>
       <?php if(isset($titulo)): ?>
         <li class="breadcrumb-item">
-            <a class="link-body-emphasis fw-semibold text-decoration-none" href="#">Administración</a>
+            <a class="link-body-emphasis fw-semibold text-decoration-none" href="#"><?php echo $seccion ?? '';?></a>
         </li>
       <?php endif; ?>
       <li class="breadcrumb-item active" aria-current="page">
