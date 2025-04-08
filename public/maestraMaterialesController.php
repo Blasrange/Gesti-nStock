@@ -74,6 +74,7 @@ if (isset($_GET['edit_id'])) {
 }
 
 $titulo = "Maestra de Materiales";
+$seccion = "Administración";
 include '../templates/header.php';
 
 ?>

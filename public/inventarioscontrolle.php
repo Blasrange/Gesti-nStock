@@ -21,68 +21,6 @@ if (!isset($_SESSION['user_id'], $_SESSION['cliente_id'], $_SESSION['ciudad_id']
     exit;
 }
 
-//Validar si se le dio click el boton de actualizar.
-if (isset($_POST['actualizar_inventario'])){
-
-    // Extraer de base de datos los valores para consultar Sigware
-    $database = new Database();
-    $result = $database->fetchAll("SELECT nodo, deposito, propietario FROM clientes WHERE id = :id", [$_SESSION['cliente_id']]);
-
-    // Extraer primer posicion de la respuesta.
-    $parametrosSigware = $result[0];
-
-    // Consumir ORDS Sigware
-    $data = WMSOrds::getInventory($parametrosSigware['nodo'], $parametrosSigware['deposito'], $parametrosSigware['propietario']);
-
-    // Actualizar la tabla local.
-    // Elimianr todo el contenido relacionado al cliente.
-    $database->execute("DELETE FROM inventarios WHERE cliente_id = :id", [$_SESSION['cliente_id']]);
-
-    // Insertar los datos en la tabla.
-    foreach ($data['data'] as $key => $row) {
-
-        // var_dump($row);
-        // die();
-
-        $database->execute("INSERT INTO inventarios (
-            codigo, lpn, localizacion, area_picking, sku, sku2,
-            descripcion, precio, tipo_material, categoria_material, unidades,
-            cajas, reserva, disponible, udm, embalaje, fecha_entrada, estado,
-            lote, fecha_fabricacion, fecha_vencimiento, fpc, peso, serial, cliente_id
-        ) VALUES (
-            :codigo, :lpn, :localizacion, :area_picking, :sku, :sku2,
-            :descripcion, :precio, :tipo_material, :categoria_material, :unidades,
-            :cajas, :reserva, :disponible, :udm, :embalaje, :fecha_entrada, :estado,
-            :lote, :fecha_fabricacion, :fecha_vencimiento, :fpc, :peso, :serial, :cliente_id
-        )",[
-            $row['codigo'],
-            $row['lpn'],
-            $row['localizacion'],
-            $row['area picking'],
-            $row['sku'],
-            $row['sku2'],
-            $row['descripcion'],
-            round($row['precio'], 2),
-            $row['tipo de material'],
-            $row['categoría de material'],
-            $row['unidades'],
-            $row['cajas'],
-            $row['reserva'],
-            $row['disponible'],
-            $row['udm'],
-            $row['embalaje'],
-            isset($row['fecha de entrada']) ? date('Y-m-d', strtotime($row['fecha de entrada'])) : null,
-            $row['estado'],
-            $row['lote'],
-            isset($row['fecha de fabricacion']) ? date('Y-m-d', strtotime($row['fecha de fabricacion'])) : null,
-            isset($row['fecha de vencimiento']) ? date('Y-m-d', strtotime($row['fecha de vencimiento'])) : null,
-            $row['fpc'],
-            $row['peso'],
-            $row['serial'],
-            $_SESSION['cliente_id']
-        ]);
-    }
-}
 
 $database = new Database();
 $cliente_id = $_SESSION['cliente_id']; // Obtener el cliente_id de la sesión
@@ -112,6 +50,7 @@ include '../templates/header.php';
 <head>
     <meta charset="UTF-8">
     <title>Inventarios</title>
+    <link rel="icon" href="https://images.icon-icons.com/943/PNG/512/shoppaymentorderbuy-10_icon-icons.com_73874.png" type="image/png" sizes="32x32">
     <link rel="stylesheet" href="assets/css/estilos.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -243,9 +182,7 @@ if (isset($_SESSION['error_message'])) {
 <div style="margin-left: 20px; margin-right: 20px">
     <div class="table-responsive">
     <div class="search-container">
-            <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" style="display: inline;">
-                <button type="submit" name="actualizar_inventario" class="btn btn-dark btn-small">Actualizar de Sigware</button>
-            </form>
+        <button type="button" onclick="actualizar()" class="btn btn-dark btn-small">Actualizar de Sigware</button>
         </div>
         <table id="tablaInventarios" class="table table-striped table-hover dataTable display" style="font-size: 80%;">
             <thead>
@@ -328,7 +265,60 @@ if (isset($_SESSION['error_message'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+
+    function actualizar(){
+        let timerInterval;
+        Swal.fire({
+            title: "Acualizando Inventario",
+            html: "Esto puede tardar varios minutos, por favor espere...",
+            timer: 1000 * 60 * 10,
+            timerProgressBar: false,
+            didOpen: () => {
+                Swal.showLoading();
+                const timer = Swal.getPopup().querySelector("b");
+                    timerInterval = setInterval(() => {
+                    timer.textContent = `${Swal.getTimerLeft()}`;
+                }, 100);
+            },
+            willClose: () => {
+                clearInterval(timerInterval);
+            }
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+                console.log("I was closed by the timer");
+            }
+        });
+
+        $.ajax({
+            url: '/Gesti-nStock-main/public/sigware_api.php',
+            type: 'POST',
+            data: {
+                cliente_id: '<?php echo $_SESSION['cliente_id'] ?>',
+                actualizar_inventario: true
+            },
+            success: function(response) {
+                clearInterval(timerInterval);
+                Swal.fire({
+                    title: "Proceso Exitoso!",
+                    icon: "success",
+                    draggable: true
+                });
+                setTimeout(() => {
+                    location.reload()
+                }, 1000);
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    title: "La Actualización Falló",
+                    text: error,
+                    icon: "error"
+                });
+            }
+        });
+    }
+
     let table = $("#tablaInventarios").DataTable({
             "oLanguage": {
                 "sUrl": "assets/js/datatables_es.json"

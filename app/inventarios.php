@@ -22,7 +22,7 @@ class Inventarios {
     }
 
     public function getAllItems() {
-        $stmt = $this->db->prepare('SELECT * FROM inventarios WHERE cliente_id = :cliente_id ORDER BY id');
+        $stmt = $this->db->prepare("SELECT * FROM inventarios WHERE cliente_id = :cliente_id AND localizacion NOT LIKE '%MUELLE%' ORDER BY id");
         $stmt->execute([':cliente_id' => $this->cliente_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

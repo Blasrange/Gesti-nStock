@@ -193,11 +193,11 @@ include '../templates/header.php';
 <?php endif; ?>
 
 <div style="margin-left: 20px; margin-right: 20px">            
-                <div class="table-responsive"> 
+                <!--div class="table-responsive"> 
                     <div class="search-container">
                         <form method="POST" style="display: inline;">
                         <button type="submit" name="actualizar" class="btn btn-dark btn-small">Actualizar</button>
-                    </form>
+                    </form-->
                 </div>           
                 <table id="tablahistorial" class="table table-striped table-hover dataTable display">
                 <thead>

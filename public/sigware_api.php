@@ -1,5 +1,9 @@
 <?php
 
+require_once '../app/db.php';
+
+use App\Database;
+
 class WMSOrds
 {
     /**
@@ -31,10 +35,6 @@ class WMSOrds
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        // Configura el timeout de la peticion
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-
         // Ejecuta la peticion cURL y obtiene la respuesta
         $response = curl_exec($ch);
 
@@ -51,34 +51,75 @@ class WMSOrds
     }
 }
 
-// // 🔹 InventoryCatalyst
-//  $response1 = callInventoryEndpoint(
-//      "SIGWARE.CALSOUTHWESTZONE.CCLCLOUD.CO",
-//      "70",
-//      "86"
-//  );
-//  print_r($response1['data']);
+//Validar si se le dio click el boton de actualizar.
+if (isset($_POST['actualizar_inventario'])){
 
-// // // 🔹 InventorySabama
-// $response2 = callInventoryEndpoint(
-//  "SIGWARE.CALCENTRALZONE.CCLCLOUD.CO",
-//    "75",
-//     "93"
-//  );
-//  print_r($response2['data']);
+    try {
 
-// // // 🔹 InventoryMondelezTAT
-//  $response3 = callInventoryEndpoint(
-//      "SIGWARE.CALNORTHWESTZONE.CCLCLOUD.CO",
-//     "78",
-//     "105"
-//  );
-//  print_r($response3['data']);
+        $cliente_id = intval($_POST['cliente_id']);
 
-// // // 🔹 InventoryRecamier
-//  $response4 = callInventoryEndpoint(
-//   "SIGWARE.RECAMIER.CCLCLOUD.CO",
-//  "73",
-//  "154"
-//  );
-// print_r($response4['data']);
+        // Extraer de base de datos los valores para consultar Sigware
+        $database = new Database();
+        $result = $database->fetchAll("SELECT nodo, deposito, propietario FROM clientes WHERE id = :id", [$cliente_id]);
+
+        // Extraer primer posicion de la respuesta.
+        $parametrosSigware = $result[0];
+
+        // Consumir ORDS Sigware
+        $data = WMSOrds::getInventory($parametrosSigware['nodo'], $parametrosSigware['deposito'], $parametrosSigware['propietario']);
+        
+        // Actualizar la tabla local.
+        // Elimianr todo el contenido relacionado al cliente.
+        $database->execute("DELETE FROM inventarios WHERE cliente_id = :id", [$cliente_id]);
+        
+        // Insertar los datos en la tabla.
+        foreach ($data['data'] as $key => $row) {
+
+            $database->execute("INSERT INTO inventarios (
+                codigo, lpn, localizacion, area_picking, sku, sku2,
+                descripcion, precio, tipo_material, categoria_material, unidades,
+                cajas, reserva, disponible, udm, embalaje, fecha_entrada, estado,
+                lote, fecha_fabricacion, fecha_vencimiento, fpc, peso, serial, cliente_id
+            ) VALUES (
+                :codigo, :lpn, :localizacion, :area_picking, :sku, :sku2,
+                :descripcion, :precio, :tipo_material, :categoria_material, :unidades,
+                :cajas, :reserva, :disponible, :udm, :embalaje, :fecha_entrada, :estado,
+                :lote, :fecha_fabricacion, :fecha_vencimiento, :fpc, :peso, :serial, :cliente_id
+            )",[
+                $row['codigo'],
+                $row['lpn'],
+                $row['localizacion'],
+                $row['area picking'],
+                $row['sku'],
+                $row['sku2'],
+                $row['descripcion'],
+                round($row['precio'], 2),
+                $row['tipo de material'],
+                $row['categoría de material'],
+                $row['unidades'],
+                $row['cajas'],
+                $row['reserva'],
+                $row['disponible'],
+                $row['udm'],
+                $row['embalaje'],
+                isset($row['fecha de entrada']) ? date('Y-m-d', strtotime($row['fecha de entrada'])) : null,
+                $row['estado'],
+                $row['lote'],
+                isset($row['fecha de fabricacion']) ? date('Y-m-d', strtotime($row['fecha de fabricacion'])) : null,
+                isset($row['fecha de vencimiento']) ? date('Y-m-d', strtotime($row['fecha de vencimiento'])) : null,
+                $row['fpc'],
+                $row['peso'],
+                $row['serial'],
+                $cliente_id
+            ]);
+        }
+
+        http_response_code(200);
+        echo True;
+        
+    } catch (Exception $e) {
+        
+        http_response_code(400);
+        echo "Caught exception: " . $e->getMessage();
+    }
+}
