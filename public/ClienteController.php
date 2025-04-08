@@ -41,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $titulo = "Clientes";
-$seccion = "Mantenimiento";
 include '../templates/header.php';
 
 $clientes = $clienteModel->getAll();
@@ -185,8 +184,8 @@ $ciudades = $ciudadModel->getAll();
                     <td style="text-align: center"><?= htmlspecialchars($cliente['telefono']) ?></td>
                     <td style="text-align: center"><?= htmlspecialchars($cliente['ciudad']) ?></td>
                     <td style="text-align: center"><?= htmlspecialchars($cliente['nodo'] ?? '') ?></td>
-                    <td style="text-align: center"><?= htmlspecialchars($cliente['deposito'] ?? '') ?></td>
-                    <td style="text-align: center"><?= htmlspecialchars($cliente['propietario'] ?? '') ?></td>
+                    <td style="text-align: center"><?= htmlspecialchars($cliente['deposito'] ) ?></td>
+                    <td style="text-align: center"><?= htmlspecialchars($cliente['propietario']) ?></td>
                     <td style="text-align: center"><?= $cliente['created_at'] ?></td>
                     <td style="text-align: center">
                         <span class="badge <?= $cliente['estado'] ? 'text-success-light' : 'text-danger-light' ?>">

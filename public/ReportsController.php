@@ -71,55 +71,91 @@ if (isset($_POST['descargar_excel'])) {
 
     if (!empty($reportes)) {
         $spreadsheet = new Spreadsheet();   
-        $sheet = $spreadsheet->getActiveSheet();
+        $sheet1 = $spreadsheet->getActiveSheet();
+        $sheet1->setTitle("Interfaz Sigware");
 
-        // Comprobamos si el cliente_id es 1 para elegir qué columnas mostrar
-        // Todos los clientes tendrán la misma estructura que cliente_id 1
-        $sheet->setCellValue('A1', 'LTLD_LPN_SRC');
-        $sheet->setCellValue('B1', 'LTLD_SKU');
-        $sheet->setCellValue('C1', 'LTLD_LOT');
-        $sheet->setCellValue('D1', 'LTLD_QTY');
-        $sheet->setCellValue('E1', 'LTLD_LPN_DST');
-        $sheet->setCellValue('F1', 'LTLD_LOCATION_DST');
+        // Hoja 1 - Interfaz Sigware
+        $sheet1->setCellValue('A1', 'LTLD_LPN_SRC');
+        $sheet1->setCellValue('B1', 'LTLD_SKU');
+        $sheet1->setCellValue('C1', 'LTLD_LOT');
+        $sheet1->setCellValue('D1', 'LTLD_QTY');
+        $sheet1->setCellValue('E1', 'LTLD_LPN_DST');
+        $sheet1->setCellValue('F1', 'LTLD_LOCATION_DST');
 
-        // Llenar datos
-        $row = 2;
+        $row1 = 2;
         foreach ($reportes as $reporte) {
-            // Asumimos que el "Embalaje" está en el reporte, por ejemplo $reporte['embalaje']
-            $embalaje = $reporte['embalaje'] ?? 1; // Valor por defecto 1 si no se encuentra el embalaje
-            $cajasReabastecer = $reporte['cajas_reabastecer'] ?? 0;
-            $ltldQty = $cajasReabastecer * $embalaje; // Cálculo de LTLD_QTY
+            $embalaje = $reporte['embalaje'] ?? 1;
+            $cajas = $reporte['cajas_reabastecer'] ?? 0;
+            $ltldQty = $cajas * $embalaje;
 
-            // Asignar valores de celdas
-            $sheet->setCellValue('A' . $row, (string)($reporte['lpn_inventario'] ?? ''));
-            $sheet->setCellValue('B' . $row, (string)($reporte['sku']));
-            $sheet->setCellValue('C' . $row, (string)($reporte['lote'] ?? ''));
-            $sheet->setCellValue('D' . $row, (string)($ltldQty)); // Establecer el valor calculado como texto
-            $sheet->setCellValue('E' . $row, (string)($reporte['lpn_max_min'] ?? ''));
-            $sheet->setCellValue('F' . $row, (string)($reporte['localizacion_destino'] ?? ''));
-            $row++;
+            $sheet1->setCellValue('A' . $row1, (string)($reporte['lpn_inventario'] ?? ''));
+            $sheet1->setCellValue('B' . $row1, (string)($reporte['sku']));
+            $sheet1->setCellValue('C' . $row1, (string)($reporte['lote'] ?? ''));
+            $sheet1->setCellValue('D' . $row1, (string)($ltldQty));
+            $sheet1->setCellValue('E' . $row1, (string)($reporte['lpn_max_min'] ?? ''));
+            $sheet1->setCellValue('F' . $row1, (string)($reporte['localizacion_destino'] ?? ''));
+            $row1++;
         }
 
-        // Formato para mejorar la presentación (por ejemplo, ajuste de columnas)
         foreach (range('A', 'F') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
+            $sheet1->getColumnDimension($col)->setAutoSize(true);
         }
 
-        // Establecer estilo de la hoja (borde, negrita, etc.)
-        $sheet->getStyle('A1:F1')->getFont()->setBold(true); // Fila de encabezado en negrita
-        $sheet->getStyle('A1:F1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER); // Centrado de texto
-
-        // Aplicar formato de texto a todas las celdas con datos
+        $sheet1->getStyle('A1:F1')->getFont()->setBold(true);
+        $sheet1->getStyle('A1:F1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         foreach (range('A', 'F') as $col) {
-            $sheet->getStyle($col . '2:' . $col . $row)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+            $sheet1->getStyle($col . '2:' . $col . $row1)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
         }
 
-        $fileName = 'reportes_cliente_' . $cliente_id . '.xls'; // Cambiar la extensión a .xls
-        header('Content-Type: application/vnd.ms-excel'); // Para Excel 97-2003
+        // Hoja 2 - Informe Montacarguista
+        $sheet2 = $spreadsheet->createSheet();
+        $sheet2->setTitle("Informe Montacarguista");
+
+        $sheet2->setCellValue('A1', 'SKU');
+        $sheet2->setCellValue('B1', 'Descripción');
+        $sheet2->setCellValue('C1', 'LPN Inventario');
+        $sheet2->setCellValue('D1', 'Localización Origen');
+        $sheet2->setCellValue('E1', 'LPN Max Min');
+        $sheet2->setCellValue('F1', 'Localización Destino');
+        $sheet2->setCellValue('G1', 'Estado');
+        $sheet2->setCellValue('H1', 'Unidades a Reabastecer');
+        $sheet2->setCellValue('I1', 'Cajas a Reabastecer');
+
+        $row2 = 2;
+        foreach ($reportes as $reporte) {
+            $embalaje = $reporte['embalaje'] ?? 1;
+            $cajas = $reporte['cajas_reabastecer'] ?? 0;
+            $unidades = $embalaje * $cajas;
+
+            $sheet2->setCellValue('A' . $row2, (string)($reporte['sku']));
+            $sheet2->setCellValue('B' . $row2, (string)($reporte['descripcion'] ?? ''));
+            $sheet2->setCellValue('C' . $row2, (string)($reporte['lpn_inventario'] ?? ''));
+            $sheet2->setCellValue('D' . $row2, (string)($reporte['localizacion_origen'] ?? ''));
+            $sheet2->setCellValue('E' . $row2, (string)($reporte['lpn_max_min'] ?? ''));
+            $sheet2->setCellValue('F' . $row2, (string)($reporte['localizacion_destino'] ?? ''));
+            $sheet2->setCellValue('G' . $row2, (string)($reporte['estado'] ?? ''));
+            $sheet2->setCellValue('H' . $row2, (string)($unidades));
+            $sheet2->setCellValue('I' . $row2, (string)($cajas));
+            $row2++;
+        }
+
+        foreach (range('A', 'I') as $col) {
+            $sheet2->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $sheet2->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet2->getStyle('A1:I1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        foreach (range('A', 'I') as $col) {
+            $sheet2->getStyle($col . '2:' . $col . $row2)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        }
+
+        // Descargar archivo
+        $fileName = 'reportes_cliente_' . $cliente_id . '.xls';
+        header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         header('Cache-Control: max-age=0');
-        
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet); // Cambiar a Writer de Excel 97-2003
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
         $writer->save('php://output');
         exit;
     }

@@ -56,7 +56,7 @@
                         <li><a class="dropdown-item" href="ReabastecimientosController.php"><i class="fas fa-arrow-up"></i> Reabastecimientos</a></li>
                         <li><a class="dropdown-item" href="ReportsController.php"><i class="fas fa-chart-line"></i> Reportes</a></li>
                         <li><a class="dropdown-item" href="HistorialController.php"><i class="fas fa-history"></i> Historial</a></li>
-                        <!--li><a class="dropdown-item" href="UsuarioController.php"><i class="fas fa-user"></i> Usuarios</a></li!-->
+                        <li><a class="dropdown-item" href="graficosController.php"><i class="fas fa-chart-pie"></i> Graficos</a></li!>
                         <!--li><a class="dropdown-item" href="ClienteController.php"><i class="fas fa-address-card"></i> Clientes</a></li!-->
                         <!--li><a class="dropdown-item" href="modulo_carga.php"><i class="fas fa-upload"></i> Interfaces</a></li!-->                        
                     </ul>
