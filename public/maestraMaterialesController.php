@@ -383,11 +383,11 @@ include '../templates/header.php';
                             <td style="text-align: center;"><?= htmlspecialchars($material['embalaje']); ?></td>
                             <td>
                             <a href="maestraMaterialesController.php?edit_id=<?= $material['id']; ?>" class="btn-editar">Editar</a>
-                                <form method="POST" style="display:inline;">
+                                <!--form method="POST" style="display:inline;">
                                     <input type="hidden" name="id" value="<?= $material['id']; ?>">
                                     <input type="hidden" name="action" value="delete">
                                     <button type="submit" class="btn-eliminar" onclick="return confirm('¿Estás seguro de que deseas eliminar este material?');">Eliminar</button>
-                                </form>                                
+                                </form!-->                                
                             </td>
 
                         </tr>

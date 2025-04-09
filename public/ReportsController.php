@@ -114,9 +114,9 @@ if (isset($_POST['descargar_excel'])) {
         $sheet2->setCellValue('A1', 'SKU');
         $sheet2->setCellValue('B1', 'Descripción');
         $sheet2->setCellValue('C1', 'LPN Inventario');
-        $sheet2->setCellValue('D1', 'Localización Origen');
-        $sheet2->setCellValue('E1', 'LPN Max Min');
-        $sheet2->setCellValue('F1', 'Localización Destino');
+        $sheet2->setCellValue('D1', 'Ubicación Origen');
+        $sheet2->setCellValue('E1', 'LPN Destino');
+        $sheet2->setCellValue('F1', 'Ubicación Destino');
         $sheet2->setCellValue('G1', 'Estado');
         $sheet2->setCellValue('H1', 'Unidades a Reabastecer');
         $sheet2->setCellValue('I1', 'Cajas a Reabastecer');
@@ -307,9 +307,9 @@ include '../templates/header.php';
                     <th style="text-align: center">SKU</th>
                     <th style="text-align: center">Descripción</th>
                     <th style="text-align: center">LPN Inventario</th>
-                    <th style="text-align: center">Localización Origen</th>
-                    <th style="text-align: center">LPN Max Min</th>
-                    <th style="text-align: center">Localización Destino</th>
+                    <th style="text-align: center">Ubicación Origen</th>
+                    <th style="text-align: center">LPN Destino</th>
+                    <th style="text-align: center">Ubicación Destino</th>
                     <th style="text-align: center">Estado</th>
                     <th style="text-align: center">Unidades a Reabastecer</th>
                     <th style="text-align: center">Cajas a Reabastecer</th>

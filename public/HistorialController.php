@@ -192,7 +192,8 @@ include '../templates/header.php';
     </div>
 <?php endif; ?>
 
-<div style="margin-left: 20px; margin-right: 20px">            
+<div style="margin-left: 20px; margin-right: 20px">  
+    <div class="table-responsive">          
                 <!--div class="table-responsive"> 
                     <div class="search-container">
                         <form method="POST" style="display: inline;">
