@@ -26,7 +26,7 @@ include '../templates/header.php';
     <style>
         .btn-back {
             display: inline-block;
-            background-color: #1e3765            ;
+            background-color: #1e3765;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -45,11 +45,11 @@ include '../templates/header.php';
         }
 
         .form-upload {
-            margin: 0px 0; /* Espaciado */
-            border: 1px solid #ccc; /* Borde */
-            padding: 1px; /* Espaciado interno */
-            border-radius: 5px; /* Bordes redondeados */
-            background-color: #f9f9f9; /* Fondo */
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
 
         .total {
@@ -57,36 +57,27 @@ include '../templates/header.php';
             margin-top: 20px;
         }
 
-        /* Estilo para alinear el título y el formulario */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            background-color: white; /* Fondo blanco */
+            background-color: white;
         }
 
         .header h1 {
             margin: 0;
         }
 
-        /*.error-message {
-            color: red;
-            font-weight: bold;
-            margin: 10px 0;
-            padding: 10px;
-            border: 2px solid red;
-            background-color: #ffe6e6; /* Fondo claro para destacar el error */
-        
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 98%;
             background-color: white;
-            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+            z-index: 1000;
             padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Añadir sombra para destacar */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .total {
@@ -95,14 +86,15 @@ include '../templates/header.php';
             width: 100%;
             background-color: #f8f9fa;
             text-align: center;
-            padding: 3px;
+            padding: 10px;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+            z-index: 1000;
         }
 
         .search-container {
             text-align: right;
         }
+        
         .search-input {
             padding: 8px;
             font-size: 16px;
@@ -111,107 +103,154 @@ include '../templates/header.php';
             width: 200px;
             margin-left: auto;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            background-color: white;
-            position: relative;
-            top: 0;
-            left: 0;
-            width: 98%;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }       
 
         .custom-file-upload {
-        background-color: #0a002b; /* Color de fondo igual al de "Seleccionar archivo" */
-        color: white; /* Color del texto */
-        padding: 10px 15px;
-        border-radius: 5px;
-        display: inline-block;
-        cursor: pointer;
-        font-weight: bold;
-    }
+            background-color: #0a002b;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-    .upload-button {
-        background-color: #0a002b; /* Igualar al botón de "Seleccionar archivo" */
-        color: white; /* Color de texto en blanco */
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-    }
+        .upload-button {
+            background-color: #0a002b;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-    .upload-button:hover {
-        background-color: #05001a; /* Color más oscuro al pasar el cursor */
-    }
+        .upload-button:hover {
+            background-color: #05001a;
+        }
 
-    h2 {
-        color: black !important; /* Forzar el color negro en los títulos */
-    }
+        h2 {
+            color: black !important;
+        }
+        
+        .download-btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .file-box {
+            margin: 0 10px;
+            font-style: italic;
+        }
+        
+        .forms-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 80px;
+        }
+        
+        .form-upload {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
     </style>
 </head>
 <body>
-    
-<div class="header">
-      <!-- Formulario para cargar inventario -->
-<div class="form-upload">
-    <h2 style="text-align: center">Cargar Inventario</h2>
-    <form action="cargar_inventario.php" method="post" enctype="multipart/form-data">
-        <label for="file-upload-inventario" class="btn btn-dark">
-            Seleccionar archivo
-        </label>
-        <span id="file-selected-inventario" class="file-box">Ningún archivo seleccionado</span>
-        <input type="file" name="file" id="file-upload-inventario" accept=".xlsx, .xls" required style="display: none;">
-        <button type="submit" name="cargar_inventario" class="btn btn-dark">Cargar Inventario</button>
-    </form>
+
+<div class="container-fluid">
+    <div class="report-container">
+            <div class="forms-container">
+                <!-- Formulario para cargar inventario -->
+                <div class="form-upload">
+                    <h2 style="text-align: center">Cargar Inventario</h2>
+                    <form action="cargar_inventario.php" method="post" enctype="multipart/form-data">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label for="file-upload-inventario" class="btn btn-dark">
+                                <i class="fas fa-file-excel"></i> Seleccionar archivo
+                            </label>
+                            <span id="file-selected-inventario" class="file-box">Ningún archivo seleccionado</span>
+                            <input type="file" name="file" id="file-upload-inventario" accept=".xlsx, .xls" required style="display: none;">
+                        </div>
+                        <button type="submit" name="cargar_inventario" class="btn btn-dark w-100">
+                            <i class="fas fa-upload"></i> Cargar Inventario
+                        </button>
+                    </form>
+                    <a href="excel/plantilla_inventario.xlsx" class="btn btn-success download-btn" download="Plantilla_Inventario.xlsx">
+                        <i class="fas fa-download"></i> Descargar Plantilla
+                    </a>
+                </div>
+
+                <!-- Formulario para cargar maestra de materiales -->
+                <div class="form-upload">
+                    <h2 style="text-align: center">Cargar Maestra de Materiales</h2>
+                    <form action="cargar_Materiales.php" method="post" enctype="multipart/form-data">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label for="file-upload-materiales" class="btn btn-dark">
+                                <i class="fas fa-file-excel"></i> Seleccionar archivo
+                            </label>
+                            <span id="file-selected-materiales" class="file-box">Ningún archivo seleccionado</span>
+                            <input type="file" name="file" id="file-upload-materiales" accept=".xlsx, .xls" required style="display: none;">
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100">
+                            <i class="fas fa-upload"></i> Cargar Materiales
+                        </button>
+                    </form>
+                    <a href="excel/plantilla_materiales.xlsx" class="btn btn-success download-btn" download="Plantilla_Materiales.xlsx">
+                        <i class="fas fa-download"></i> Descargar Plantilla
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mostrar mensajes de error o éxito -->
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 1100;">
+                    <?= htmlspecialchars($_SESSION['error_message']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error_message']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 80px; right: 20px; z-index: 1100;">
+                    <?= htmlspecialchars($_SESSION['success_message']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php endif; ?>
+
+            <script>
+                // Mostrar el nombre del archivo seleccionado
+                document.getElementById('file-upload-inventario').addEventListener('change', function() {
+                    var fileName = this.files[0] ? this.files[0].name : "Ningún archivo seleccionado";
+                    document.getElementById('file-selected-inventario').textContent = fileName;
+                });
+
+                document.getElementById('file-upload-materiales').addEventListener('change', function() {
+                    var fileName = this.files[0] ? this.files[0].name : "Ningún archivo seleccionado";
+                    document.getElementById('file-selected-materiales').textContent = fileName;
+                });
+
+                // Cerrar automáticamente las alertas después de 5 segundos
+                setTimeout(() => {
+                    const alerts = document.querySelectorAll('.alert');
+                    alerts.forEach(alert => {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    });
+                }, 5000);
+            </script>
+    </div>        
 </div>
-
-<!-- Formulario para cargar maestra de materiales -->
-<div class="form-upload">
-    <h2 style="text-align: center">Cargar Maestra de Materiales</h2>
-    <form action="cargar_Materiales.php" method="post" enctype="multipart/form-data">
-        <label for="file-upload-materiales" class="btn btn-dark">
-            Seleccionar archivo
-        </label>
-        <span id="file-selected-materiales" class="file-box">Ningún archivo seleccionado</span>
-        <input type="file" name="file" id="file-upload-materiales" accept=".xlsx, .xls" required style="display: none;">
-        <button type="submit" class="btn btn-dark">Cargar Materiales</button>
-    </form>
-</div>
-
-    <!-- Mostrar mensajes de error o éxito -->
-    <?php if (isset($_SESSION['error_message'])): ?>
-        <p class="error"><?= htmlspecialchars($_SESSION['error_message']) ?></p>
-        <?php unset($_SESSION['error_message']); ?>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['success_message'])): ?>
-        <p class="success"><?= htmlspecialchars($_SESSION['success_message']) ?></p>
-        <?php unset($_SESSION['success_message']); ?>
-    <?php endif; ?>
-</div>
-
-<script>
-    // JavaScript para mostrar el nombre del archivo seleccionado para cada formulario
-    document.getElementById('file-upload-inventario').addEventListener('change', function() {
-        var fileName = this.files[0] ? this.files[0].name : "Ningún archivo seleccionado";
-        document.getElementById('file-selected-inventario').textContent = fileName;
-    });
-
-    document.getElementById('file-upload-materiales').addEventListener('change', function() {
-        var fileName = this.files[0] ? this.files[0].name : "Ningún archivo seleccionado";
-        document.getElementById('file-selected-materiales').textContent = fileName;
-    });
-</script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
-    
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
 
 </body>
 </html>

@@ -11,7 +11,6 @@ class Replenishment {
     }
 
     public function generateReplenishments($clienteId) {
-        // Obtener la lista de materiales con embalaje
         $materials = $this->db->fetchAll("SELECT sku, lpn, localizacion, stock_minimo, stock_maximo, descripcion, embalaje FROM maestra_materiales WHERE cliente_id = ?", [$clienteId]);
 
         if ($materials === false) {
@@ -95,21 +94,23 @@ class Replenishment {
                     $lote = $otherLocationItem['lote'];
                     $fechaVencimiento = $otherLocationItem['fecha_vencimiento'];
                     $estado = $otherLocationItem['estado'];
+                    $fpc = $otherLocationItem['fpc'];
 
                     if ($availableInOtherLocation > 0) {
                         $unitsToTake = min($availableInOtherLocation, $unitsToReplenish - $totalTaken);
 
                         if ($unitsToTake > 10) {
                             $result = $this->db->execute(
-                                "INSERT INTO reabastecimientos (sku, descripcion, lpn_inventario, localizacion_origen, unidades_reabastecer, lote, fecha_vencimiento, lpn_max_min, localizacion_destino, estado, embalaje, cliente_id, created_at) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                                "INSERT INTO reabastecimientos (sku, descripcion, lpn_inventario, localizacion_origen, unidades_reabastecer, lote, fecha_vencimiento, fpc, lpn_max_min, localizacion_destino, estado, embalaje, cliente_id, created_at) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
                                 ON DUPLICATE KEY UPDATE 
                                 unidades_reabastecer = VALUES(unidades_reabastecer), 
                                 lote = VALUES(lote), 
-                                fecha_vencimiento = VALUES(fecha_vencimiento), 
+                                fecha_vencimiento = VALUES(fecha_vencimiento),
+                                fpc = VALUES(fpc),
                                 estado = VALUES(estado), 
                                 embalaje = VALUES(embalaje)", 
-                                [$sku, $descripcion, $lpnInventario, $localizacionOrigen, $unitsToTake, $lote, $fechaVencimiento, $lpnMaestra, $localizacionMaestra, $estado, $embalaje, $clienteId]
+                                [$sku, $descripcion, $lpnInventario, $localizacionOrigen, $unitsToTake, $lote, $fechaVencimiento, $fpc, $lpnMaestra, $localizacionMaestra, $estado, $embalaje, $clienteId]
                             );
 
                             if (!$result) {
@@ -125,6 +126,7 @@ class Replenishment {
                                     'unidades_reabastecer' => $unitsToTake,
                                     'lote' => $lote,
                                     'fecha_vencimiento' => $fechaVencimiento,
+                                    'fpc' => $fpc,
                                     'lpn_max_min' => $lpnMaestra,
                                     'localizacion_destino' => $localizacionMaestra,
                                     'estado' => $estado,

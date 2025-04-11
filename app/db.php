@@ -73,4 +73,21 @@ class Database {
             return false;
         }
     }
+
+    public function getClienteNombreById($cliente_id) {
+        $stmt = $this->pdo->prepare("SELECT nombre FROM clientes WHERE id = ?");
+        $stmt->execute([$cliente_id]);
+        return $stmt->fetchColumn();
+    }
+    
+    public function getUsuarioNombreById($usuario_id) {
+        $stmt = $this->pdo->prepare("SELECT name FROM users WHERE id = ?");
+        $stmt->execute([$usuario_id]);
+        return $stmt->fetchColumn();
+    }
+
+    // Método agregado para compatibilidad con LogMateriales
+    public function query($sql, $params = []) {
+        return $this->fetchAll($sql, $params);
+    }
 }

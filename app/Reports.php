@@ -36,14 +36,16 @@ class Reports {
 
                 // Guardar el reporte con cajas
                 $result = $this->db->execute(
-                    "INSERT INTO reportes (sku, descripcion, lpn_inventario, localizacion_origen, lpn_max_min, localizacion_destino, estado, unidades_reabastecer, cajas_reabastecer, cliente_id, created_at)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "INSERT INTO reportes (sku, descripcion, lpn_inventario, localizacion_origen, lote, lpn_max_min, localizacion_destino, estado, fpc, unidades_reabastecer, cajas_reabastecer, cliente_id, created_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                      ON DUPLICATE KEY UPDATE
                         descripcion = VALUES(descripcion),
                         localizacion_origen = VALUES(localizacion_origen),
+                        lote = VALUES(lote),
                         lpn_max_min = VALUES(lpn_max_min),
                         localizacion_destino = VALUES(localizacion_destino),
                         estado = VALUES(estado),
+                        fpc = VALUES(fpc),
                         unidades_reabastecer = VALUES(unidades_reabastecer),
                         cajas_reabastecer = VALUES(cajas_reabastecer),
                         created_at = VALUES(created_at)",
@@ -52,9 +54,11 @@ class Reports {
                         $replenishment['descripcion'],
                         $replenishment['lpn_inventario'],
                         $replenishment['localizacion_origen'],
+                        $replenishment['lote'],
                         $replenishment['lpn_max_min'],
                         $replenishment['localizacion_destino'],
                         $replenishment['estado'],
+                        $replenishment['fpc'],
                         $unidadesReabastecer,
                         $cajasReabastecer,
                         $cliente_id,
@@ -93,9 +97,11 @@ class Reports {
                          r.descripcion, 
                          r.lpn_inventario, 
                          r.localizacion_origen, 
+                         r.lote,
                          r.lpn_max_min, 
                          r.localizacion_destino, 
                          r.estado, 
+                         r.fpc,
                          r.unidades_reabastecer, 
                          r.embalaje, 
                          r.created_at, 

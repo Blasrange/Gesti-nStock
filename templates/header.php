@@ -57,7 +57,7 @@
                         <li><a class="dropdown-item" href="ReportsController.php"><i class="fas fa-chart-line"></i> Reportes</a></li>
                         <li><a class="dropdown-item" href="HistorialController.php"><i class="fas fa-history"></i> Historial</a></li>
                         <li><a class="dropdown-item" href="graficosController.php"><i class="fas fa-chart-pie"></i> Graficos</a></li!>
-                        <!--li><a class="dropdown-item" href="ClienteController.php"><i class="fas fa-address-card"></i> Clientes</a></li!-->
+                        <li><a class="dropdown-item" href="MovimientoController.php"><i class="fas fa-address-card"></i> Log</a></li!>
                         <!--li><a class="dropdown-item" href="modulo_carga.php"><i class="fas fa-upload"></i> Interfaces</a></li!-->                        
                     </ul>
                 </li>
@@ -93,7 +93,7 @@
             </div>
        
 </nav>
-<nav aria-label="breadcrumb" style="margin-top:75px">
+<nav aria-label="breadcrumb" style="margin-top:75px" id="nvbar">
     <ol class="breadcrumb breadcrumb-chevron p-3 bg-body-tertiary rounded-3">
       <li class="breadcrumb-item">
         <a class="link-body-emphasis" href="dashboard.php">
@@ -111,3 +111,20 @@
       </li>
     </ol>
     </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        
+        // Verificar si el path NO contiene 'graficosController.php'
+        if (!currentPath.includes('graficosController.php')) {
+            const navBar = document.getElementById('nvbar');
+            
+            // Aplicar estilos solo si el elemento existe
+            if (navBar) {
+                navBar.style.marginLeft = '30px';
+                navBar.style.marginRight = '30px';
+            }
+        }
+    });
+</script>
